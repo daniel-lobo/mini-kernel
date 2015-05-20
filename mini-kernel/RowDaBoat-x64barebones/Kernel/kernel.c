@@ -23,6 +23,7 @@ void clearBSS(void * bssAddress, uint64_t bssSize)
 	memset(bssAddress, 0, bssSize);
 }
 
+// endOfKernel es el final real, a diferencia del endOfKernelBinary
 void * getStackBase()
 {
 	return (void*)(
@@ -45,6 +46,8 @@ void * initializeKernelBinary()
 		sampleDataModuleAddress
 	};
 
+	// &endOfKernelBinary
+	// no importa el valor, lo que importa es la direccion de memoria
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	ncPrint("[Done]");
 	ncNewline();
@@ -74,6 +77,9 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+// to config:
+// drivers de video
+// drivers de teclado
 int main()
 {	
 	ncPrint("[Kernel Main]");

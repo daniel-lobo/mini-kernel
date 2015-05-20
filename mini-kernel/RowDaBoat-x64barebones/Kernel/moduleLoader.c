@@ -10,6 +10,7 @@ void loadModules(void * payloadStart, void ** targetModuleAddress)
 {
 	int i;
 	uint8_t * currentModule = (uint8_t*)payloadStart;
+	// lee la cantidad de modulos que tiene
 	uint32_t moduleCount = readUint32(&currentModule);
 
 	for (i = 0; i < moduleCount; i++)
@@ -27,7 +28,7 @@ static void loadModule(uint8_t ** module, void * targetModuleAddress)
 	ncPrint(" (");
 	ncPrintDec(moduleSize);
 	ncPrint(" bytes)");
-
+	
 	memcpy(targetModuleAddress, *module, moduleSize);
 	*module += moduleSize;
 
