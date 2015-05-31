@@ -13,17 +13,17 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-static void * const sampleCodeModuleAddress = (void*)0x40000;
-static void * const sampleDataModuleAddress = (void*)0x50000;
+static void * const sampleCodeModuleAddress = (void*)0x400000;
+static void * const sampleDataModuleAddress = (void*)0x500000;
 
 typedef int (*EntryPoint)();
+
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
 	memset(bssAddress, 0, bssSize);
 }
 
-// endOfKernel es el final real, a diferencia del endOfKernelBinary
 void * getStackBase()
 {
 	return (void*)(
@@ -35,8 +35,13 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
+	char buffer[10];
+
 	ncPrint("[x64BareBones]");
 	ncNewline();
+
+	ncPrint("CPU Vendor:");
+	ncPrint(cpuVendor(buffer));
 	ncNewline();
 
 	ncPrint("[Loading modules]");
@@ -46,8 +51,6 @@ void * initializeKernelBinary()
 		sampleDataModuleAddress
 	};
 
-	// &endOfKernelBinary
-	// no importa el valor, lo que importa es la direccion de memoria
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	ncPrint("[Done]");
 	ncNewline();
@@ -77,9 +80,6 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-// to config:
-// drivers de video
-// drivers de teclado
 int main()
 {	
 	ncPrint("[Kernel Main]");
