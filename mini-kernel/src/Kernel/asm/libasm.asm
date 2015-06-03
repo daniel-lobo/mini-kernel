@@ -18,31 +18,63 @@ EXTERN      serial_handler
 EXTERN		syscall_handler
 
 SECTION .text
+%macro pushaq 0
+    push rax      ;save current rax
+    push rbx      ;save current rbx
+    push rcx      ;save current rcx
+    push rdx      ;save current rdx
+    push rbp      ;save current rbp
+    push rdi       ;save current rdi
+    push rsi       ;save current rsi
+    push r8        ;save current r8
+    push r9        ;save current r9
+    push r10      ;save current r10
+    push r11      ;save current r11
+    push r12      ;save current r12
+    push r13      ;save current r13
+    push r14      ;save current r14
+    push r15      ;save current r15
+%endmacro
+
+%macro popaq 0
+        pop r15
+        pop r14
+        pop r13
+        pop r12
+        pop r11
+        pop r10
+        pop r9
+        pop r8
+        pop rsi
+        pop rdi
+        pop rbp
+        pop rdx
+        pop rcx
+        pop rbx
+        pop rax
+%endmacro
 
 _outb:
-    push    ebp
-    mov     ebp, esp
-    push    eax
-    push    edx
-    mov     eax, [ss:ebp+8]
-    mov     edx, [ss:ebp+12]
+    push    rbp
+    mov     rbp, rsp
+    mov     rax, rdi
+    mov     rdx, rsi
+    mov     rdi, [rbp+8]
+    mov     rsi, [rbp+12]
     out     dx, al
-    pop     edx
-    pop     eax
-    mov     esp, ebp
-    pop     ebp
+    mov     rsp, rbp
+    pop     rbp
     ret
 
 _inb:
-    push    ebp
-    mov     ebp, esp
-    push    edx
-    mov     edx, [ss:ebp+8]
-    xor     eax, eax
+    push    rbp
+    mov     rbp, rsp
+    mov     rdx, rsi
+    mov     rdx, [rbp+8]
+    xor     rax, rax
     in      al, dx
-    pop     edx
-    mov     esp, ebp
-    pop     ebp
+    mov     rsp, rbp
+    pop     rbp
 	ret
 
 _hlt:
@@ -58,128 +90,71 @@ _sti:
     ret
 
 _mask_pic_1:
-    push    ebp
-    mov     ebp, esp
-    mov     ax, [ss:ebp+8]          ; ax = 16 bit mask
+    push    rbp
+    mov     rbp, rsp
+    mov     ax, [rbp+8]          ; ax = 16 bit mask
     out     21h,al
-    pop     ebp
+    pop     rbp
     retn
 
 _mask_pic_2:
-    push    ebp
-    mov     ebp, esp
-    mov     ax, [ss:ebp+8]          ; ax = 16 bit mask
+    push    rbp
+    mov     rbp, rsp
+    mov     ax, [rbp+8]          ; ax = 16 bit mask
     out     0A1h,al
-    pop     ebp
+    pop     rbp
     retn
-
-_lidt:                              ; Load the IDTR
-    push    ebp
-    mov     ebp, esp
-    push    ebx
-    mov     ebx, [ss:ebp+6]         ; ds:bx = IDTR pointer 
-    rol     ebx,16
-    lidt    [ds:ebx]                ; Load IDTR
-    pop     ebx
-    pop     ebp
-    retn
-
 
 _timertick_handler:                 ; INT 0x08 Handler (Timertick)
-    push    ds
-    push    es                      ; Save registers
-    pusha                       
-    mov     ax, 10h
-    mov     ds, ax                  ; Load DS and ES with the selector value
-    mov     es, ax                  
+
+    pushaq                       
+    mov     ax, 10h              
     call    timertick_handler
     mov     al, 20h                 ; Send generic EOI to PIC
     out     20h, al
-    popa                            
-    pop     es
-    pop     ds
+    popaq                            
+
     iret
 
 _keyboard_handler:                  ; INT 0x09 Handler (Keyboard)
-    push    ds
-    push    es                      ; Save registers
-    pusha
+    pushaq
     mov     ax, 10h
-    mov     ds, ax                  ; Load DS and ES with the selector value
-    mov     es, ax
     call    keyboard_handler
     mov     al, 20h                 ; Send generic EOI to PIC
     out     20h, al
-    popa
-    pop     es
-    pop     ds
+    popaq
     iret
 
 _syscall_handler:					; INT 0x80 Handler (Syscall)
-    push    ds
-    push    es                      ; Save registers
-
-	push	eax                 
-    mov     ax, 10h
-    mov     ds, ax                  ; Load DS and ES with the selector value
-    mov     es, ax                  
-	pop		eax
-
-	push	ebp						; Not a parameter, just avoiding to
-									; modify it unintentionally
-
-	push	edi						; Call syscall handler with parameters
-	push	esi
-	push 	edx
-	push	ecx
-	push	ebx
-	push	eax
+    
+    push    rbp
 	call    syscall_handler
-	pop		ebx						; Discard EAX push. It's used as retval
-	pop		ebx
-	pop		ecx
-	pop		edx
-	pop		esi
-	pop		edi
-
-	pop		ebp
-
-	push	eax
+    pop     rbp
+	push	rax
     mov     al, 20h                 ; Send generic EOI to PIC
     out     20h, al
-	pop		eax
+	pop		rax
 
-    pop     es
-    pop     ds
     iret
 
 _syscall:
-    push    ebp
-    mov     ebp, esp
-
-	push	edi						; Manually save registers
-	push 	esi						; Note: EAX is used for return value
-	push	edx
-	push	ecx
-	push	ebx
+    push    rbp
+    mov     rbp, rsp
+    pushaq
     pushf
 
-    mov     edi, [ss:ebp+28]
-    mov     esi, [ss:ebp+24]
-    mov     edx, [ss:ebp+20]
-    mov     ecx, [ss:ebp+16]
-    mov     ebx, [ss:ebp+12]
-    mov     eax, [ss:ebp+8]
+    mov     rdi, [rbp+28]
+    mov     rsi, [rbp+24]
+    mov     rdx, [rbp+20]
+    mov     rcx, [rbp+16]
+    mov     rbx, [rbp+12]
+    mov     rax, [rbp+8]
 
     int     80h
 
     popf
-    pop		ebx
-	pop		ecx
-	pop		edx
-	pop		esi
-	pop		edi
+    popaq
 
-    mov     esp, ebp
-    pop     ebp
+    mov     rsp, rbp
+    pop     rbp
     ret
