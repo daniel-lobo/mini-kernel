@@ -64,7 +64,7 @@ int main()
 
 	/* Cargar la IDT */
 	setup_idt_entry(&idt[0x08], 0x08, (dword)&_timertick_handler, ACS_INT, 0);
-    setup_idt_entry(&idt[0x09], 0x08, (dword)&_keyboard_handler, ACS_INT, 0);
+  setup_idt_entry(&idt[0x09], 0x08, (dword)&_keyboard_handler, ACS_INT, 0);
 	setup_idt_entry(&idt[0x80], 0x08, (dword)&_syscall_handler, ACS_INT, 0);
 	
 	/* Carga de IDTR */
@@ -75,15 +75,15 @@ int main()
 	_lidt(&idtr);	
 
 	/* Habilito interrupcion de timer tick*/
-    _mask_pic_1(~((1 << 0) | (1 << 1) | (1 << 3) | (1 << 4)));
-    _mask_pic_2(0xFF);
+  _mask_pic_1(~((1 << 0) | (1 << 1) | (1 << 3) | (1 << 4)));
+  _mask_pic_2(0xFF);
 
-    /* Habilito interrupciones */
-    _sti();
+  /* Habilito interrupciones */
+  _sti();
 	_hlt();
 
 	/* Arrancar el shell*/
-    sh_init();
+  sh_init();
 
 	return 0;
 }
