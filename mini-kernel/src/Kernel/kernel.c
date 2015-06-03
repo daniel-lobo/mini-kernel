@@ -24,7 +24,7 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 
-DESCR_INT idt[0x100];	/* IDT de 256 entradas*/
+DESCR_INT idt[0x0];	/* IDT de 256 entradas*/
 IDTR idtr;				/* IDTR */
 
 typedef int (*EntryPoint)();
@@ -63,16 +63,16 @@ int main()
 	_cli();
 
 	/* Cargar la IDT */
-	setup_idt_entry(&idt[0x08], 0x08, (dword)&_timertick_handler, ACS_INT, 0);
-  setup_idt_entry(&idt[0x09], 0x08, (dword)&_keyboard_handler, ACS_INT, 0);
+	setup_idt_entry(&idt[0x21], 0x08, (dword)&_timertick_handler, ACS_INT, 0);
+    setup_idt_entry(&idt[0x28], 0x08, (dword)&_keyboard_handler, ACS_INT, 0);
 	setup_idt_entry(&idt[0x80], 0x08, (dword)&_syscall_handler, ACS_INT, 0);
 	
 	/* Carga de IDTR */
-	idtr.base = 0;  
-	idtr.base +=(dword) &idt;
-	idtr.limit = sizeof(idt)-1;
+	// idtr.base = 0;  
+	// idtr.base +=(dword) &idt;
+	// idtr.limit = sizeof(idt)-1;
 	
-	_lidt(&idtr);	
+	// _lidt(&idtr);	
 
 	/* Habilito interrupcion de timer tick*/
   _mask_pic_1(~((1 << 0) | (1 << 1) | (1 << 3) | (1 << 4)));
@@ -89,11 +89,13 @@ int main()
 }
 
 void
-setup_idt_entry (DESCR_INT *item, byte selector, dword offset, byte access,
-			 byte cero) {
-  item->selector = selector;
-  item->offset_l = offset & 0xFFFF;
-  item->offset_h = offset >> 16;
-  item->access = access;
-  item->cero = cero;
+setup_idt_entry (DESCR_INT *item, uint8_t selector, uint64_t offset, uint8_t access,
+			 uint8_t cero) {
+  item.offset_l = offset & 0xFFFF;
+  item.selector = selector;
+  item.cero1 = 0;
+  item.access = access;
+  item.offset_m = (offset & 0xFFFF0000) >> 16;
+  item.offset_h = offset >> 32;
+  item.cero2 = 0;
 }

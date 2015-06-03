@@ -27,23 +27,15 @@
 
 #pragma pack (1) 		/* Alinear las siguiente estructuras a 1 byte */
 
-/* Segment descriptor */
-typedef struct {
-  word limit,
-       base_l;
-  byte base_m,
-       access,
-       attribs,
-       base_h;
-} DESCR_SEG;
-
 /* Interrupt descriptor */
 typedef struct {
-  word      offset_l,
+  uint16_t  offset_l,
             selector;
-  byte      cero,
+  uint8_t   cero,
             access;
-  word	    offset_h;
+  uint16_t  offset_m;
+  uint32_t  offset_h,
+            cero;
 } DESCR_INT;
 
 /* IDTR  */
