@@ -1,0 +1,17 @@
+#Binary Files
+*.bin
+*.sys
+
+#The images
+*.img
+*.qcow2
+*.vmdk
+
+#Object files
+*.o
+
+#Git files
+.git
+
+#Glue terminal
+glue.terminal
