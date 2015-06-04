@@ -2,7 +2,7 @@ global libasm
 
 global _pit_handler
 global _keyboard_handler, _keyboard_done
-global _syscall, _syscall_handler
+global _syscall_handler
 
 global _get_idtr, _set_idt_entry, _mask_pic, _cli, _sti
 global _outb
@@ -99,25 +99,3 @@ _syscall_handler:					; INT 0x80 Handler (Syscall)
     pop rax
     pop rdi
     iretq
-
-_syscall:
-    push rbp
-    mov rbp, rsp
-    push rbx
-    push rsp
-    push rbp
-    push r12
-    push r13
-    push r14
-    push r15
-    int 80h
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop rbp
-    pop rsp
-    pop rbx
-    mov rsp, rbp
-    pop rbp
-    ret

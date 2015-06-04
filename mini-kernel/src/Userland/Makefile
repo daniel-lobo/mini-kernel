@@ -1,21 +1,20 @@
-include ../Makefile.variables
 include Makefile.inc
 
-all: syscalls clibs shell shellDataModule
+all: syscallModule libcModule shellModule
 
-shell:
-	cd shel; make
+shellModule:
+	cd shellModule; make
 
-clibs:
-	cd clibs; make
+libcModule:
+	cd libcModule; make
 
-syscalls:
-	cd syscalls; make
+syscallModule:
+	cd syscallModule; make
 
 clean:
-	cd shell; make clean
-	cd syscalls; make clean
-	cd clibs; make clean
+	cd shellModule; make clean
+	cd syscallModule; make clean
+	cd libcModule; make clean
 	rm -rf *.bin
 
-.PHONY: syscalls clibs shell all clean
+.PHONY: syscallModule libcModule shellModule all clean

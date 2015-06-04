@@ -2,8 +2,7 @@
 #include "./include/stdio.h"
 #include "./include/ctype.h"
 #include "./include/string.h"
-#include "../../Kernel/include/kasm.h"
-#include "../../Kernel/include/syscall.h"
+#include "../syscall/include/syscall.h"
 #include <stdarg.h>
 
 FILE _stdin = { STDIN_FILENO };
@@ -375,14 +374,14 @@ vsscanf(char *str, const char *fmt, va_list ap)
     return 0;
 }
 
-ssize_t
-read(int fd, void *buf, size_t count)
+int
+read(int fd, void *buf, int count)
 {
-    return _syscall(SYSCALL_READ, fd, (int)buf, count, 0, 0);
+    return sc_read(fd, buf, count);
 }
 
-ssize_t
-write(int fd, const void *buf, size_t count)
+void
+write(int fd, const void *buf, int count)
 {
-    return _syscall(SYSCALL_WRITE, fd, (int)buf, count, 0, 0);
+    sc_write(fd, buf, count);
 }

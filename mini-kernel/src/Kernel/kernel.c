@@ -4,14 +4,8 @@
 #include "./include/defs.h"
 #include "./include/keyboard.h"
 #include "./include/syscall.h"
-//#include "./include/video.h"
 
-#include "./include/clib.h"
-
-/*#include "../Userland/clibs/include/stdlib.h"
-#include "../Userland/clibs/include/string.h"
-#include "../Userland/clibs/include/stdio.h"
-#include "../Userland/shell/include/shell.h"*/
+#include "./include/libc.h"
 
 #include "./include/moduleLoader.h"
 
@@ -24,9 +18,11 @@ extern uint8_t endOfKernel;
 
 static const uint64_t PageSize = 0x1000;
 
-static void * const sampleCodeModuleAddress = (void*)0x400000;
+static void * const shell_module_address = (void*)0x400000;
+static void * const libc_module_address = (void*)0x500000;
+static void * const syscall_module_address = (void*)0x600000;
 
-IDTR idtr;				/* IDTR */
+IDTR idtr; /* IDTR description*/
 
 typedef int (*EntryPoint)();
 
@@ -48,7 +44,9 @@ void * initializeKernelBinary()
 {
 	/* Load modules */
 	void * moduleAddresses[] = {
-		sampleCodeModuleAddress
+		shell_module_address,
+		libc_module_address,
+		syscall_module_address
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);

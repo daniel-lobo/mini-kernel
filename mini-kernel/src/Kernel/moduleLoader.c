@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "../Userland/clibs/include/string.h"
+#include "./include/libc.h"
 #include "./include/moduleLoader.h"
 
 static void loadModule(uint8_t ** module, void * targetModuleAddress);
