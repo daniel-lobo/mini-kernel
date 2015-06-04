@@ -12,7 +12,7 @@ int args_shift(int n, int *argc, char ***argv);
 
 typedef struct {
     char *name;
-    int (*exec)(int argc, char **argv);
+    int (*execute)(int argc, char **argv);
 } command_t;
 
 #endif

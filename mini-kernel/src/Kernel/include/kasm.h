@@ -3,21 +3,19 @@
 void _outb(unsigned char value, unsigned short int port);
 int _inb(unsigned short int port);
 
-void _hlt(void);
+void _cli();
+void _sti();
+
+void _hlt();
+
+void _set_idt_entry(unsigned char index, void * handler, void * base);
 
 int _syscall(int number, int param1, int param2, int param3, int param4, int param5);
 
-void _lidt(IDTR *idtr);
+void _mask_pic();  /* Escribe mascara de PIC1 */
 
-void _mask_pic_1(byte mascara);  /* Escribe mascara de PIC1 */
-void _mask_pic_2(byte mascara);  /* Escribe mascara de PIC2 */
+void _get_idtr(IDTR * idtr);
 
-void _cli(void);        /* Deshabilita interrupciones  */
-void _sti(void);	 /* Habilita interrupciones  */
-
-void _timertick_handler();      /* Timer tick */
-void _keyboard_handler();		/* Keyboard */
-void _syscall_handler();			/* Syscalls */
-
-void _debug (void);
-
+void _pit_handler();
+void _keyboard_handler();
+void _syscall_handler();

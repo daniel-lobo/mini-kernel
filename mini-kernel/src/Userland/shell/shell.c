@@ -17,7 +17,8 @@ command_t commands[] = {
     { "help", exec_help },
     { "srtc", exec_set_rtc },
     { "prtc", exec_print_rtc },
-    { "screensaver", exec_screensaver },
+    { "sstest", exec_test_ss },
+    { "sstime", exec_set_ss },
     { NULL, NULL }
 };
 

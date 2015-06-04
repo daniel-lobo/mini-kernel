@@ -14,7 +14,7 @@ strcpy(char *dest, const char *src)
 }
 
 char *
-strncpy(char *dest, const char *src, size_t n)
+strncpy(char *dest, const char *src, uint64_t n)
 {
     char *ret = dest;
     int i = 0;
@@ -60,7 +60,7 @@ strcmp(const char *s1, const char *s2)
 }
 
 int
-strncmp(const char *s1, const char *s2, size_t n)
+strncmp(const char *s1, const char *s2, uint64_t n)
 {
     int i = 0;
     while (*s1 && *s2 && *s1 == *s2)
@@ -139,7 +139,7 @@ strrchr(const char *s, int c)
 }
 
 void *
-memcpy(void *dest, const void *src, size_t n)
+memcpy(void *dest, const void *src, uint64_t n)
 {
     char *d = (char *)dest;
     char *s = (char *)src;
@@ -151,7 +151,7 @@ memcpy(void *dest, const void *src, size_t n)
 }
 
 int
-memcmp(const void *s1, const void *s2, size_t n)
+memcmp(const void *s1, const void *s2, uint64_t n)
 {
     unsigned char *c1 = (unsigned char *)s1;
     unsigned char *c2 = (unsigned char *)s2;
@@ -164,7 +164,7 @@ memcmp(const void *s1, const void *s2, size_t n)
 }
 
 void *
-memset(void *s, int c, size_t n)
+memset(void *s, int32_t c, uint64_t n)
 {
     unsigned char *p = (unsigned char *)s;
     while (n--)

@@ -6,10 +6,12 @@
 #include "./include/syscall.h"
 //#include "./include/video.h"
 
-#include "../Userland/clibs/include/stdlib.h"
+#include "./include/clib.h"
+
+/*#include "../Userland/clibs/include/stdlib.h"
 #include "../Userland/clibs/include/string.h"
 #include "../Userland/clibs/include/stdio.h"
-#include "../Userland/shell/include/shell.h"
+#include "../Userland/shell/include/shell.h"*/
 
 #include "./include/moduleLoader.h"
 
@@ -24,7 +26,6 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 
-DESCR_INT idt[0x0];	/* IDT de 256 entradas*/
 IDTR idtr;				/* IDTR */
 
 typedef int (*EntryPoint)();
@@ -59,43 +60,22 @@ void * initializeKernelBinary()
 }
 
 int main()
-{
+	{
 	_cli();
 
-	/* Cargar la IDT */
-	setup_idt_entry(&idt[0x21], 0x08, (dword)&_timertick_handler, ACS_INT, 0);
-    setup_idt_entry(&idt[0x28], 0x08, (dword)&_keyboard_handler, ACS_INT, 0);
-	setup_idt_entry(&idt[0x80], 0x08, (dword)&_syscall_handler, ACS_INT, 0);
-	
-	/* Carga de IDTR */
-	// idtr.base = 0;  
-	// idtr.base +=(dword) &idt;
-	// idtr.limit = sizeof(idt)-1;
-	
-	// _lidt(&idtr);	
+	_get_idtr(&idtr);
 
-	/* Habilito interrupcion de timer tick*/
-  _mask_pic_1(~((1 << 0) | (1 << 1) | (1 << 3) | (1 << 4)));
-  _mask_pic_2(0xFF);
+	/* setear los handlers en la IDT */
+	_set_idt_entry(0x20, &_pit_handler, &(idtr.base));
+    _set_idt_entry(0x21, &_keyboard_handler, &(idtr.base));
+	_set_idt_entry(0x80, &_syscall_handler, &(idtr.base));
 
-  /* Habilito interrupciones */
-  _sti();
+	/* Habilito interrupcion de teclado*/
+	_mask_pic();
+
+	/* Habilito interrupciones */
+	_sti();
 	_hlt();
 
-	/* Arrancar el shell*/
-  sh_init();
-
 	return 0;
-}
-
-void
-setup_idt_entry (DESCR_INT *item, uint8_t selector, uint64_t offset, uint8_t access,
-			 uint8_t cero) {
-  item.offset_l = offset & 0xFFFF;
-  item.selector = selector;
-  item.cero1 = 0;
-  item.access = access;
-  item.offset_m = (offset & 0xFFFF0000) >> 16;
-  item.offset_h = offset >> 32;
-  item.cero2 = 0;
 }
