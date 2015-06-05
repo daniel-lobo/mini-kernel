@@ -65,7 +65,7 @@ int main()
 
 	/* setear los handlers en la IDT */
 	_set_idt_entry(0x20, &_pit_handler, &(idtr.base));
-    _set_idt_entry(0x21, &_keyboard_handler, &(idtr.base));
+  _set_idt_entry(0x21, &_keyboard_handler, &(idtr.base));
 	_set_idt_entry(0x80, &_syscall_handler, &(idtr.base));
 
 	/* Habilito interrupcion de teclado*/
