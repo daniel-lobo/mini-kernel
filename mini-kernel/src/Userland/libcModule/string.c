@@ -1,5 +1,7 @@
+#include <stdint.h>
 #include "./include/ctype.h"
 #include "./include/string.h"
+#include "./include/stddef.h"
 
 char *
 strcpy(char *dest, const char *src)
@@ -38,10 +40,10 @@ strcat(char *dest, const char *src)
 	return strcpy(dest + strlen(dest), src);
 }
 
-size_t
+uint64_t
 strlen(const char *s)
 {
-    size_t i = 0;
+    uint64_t i = 0;
     while (*s++ != '\0')
     {
         i++;

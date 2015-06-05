@@ -1,15 +1,14 @@
 include ../Makefile.inc
 
-HEADERS = -I./include
-LIBRARIES = -L../syscallModule/lib
+HEADERS=-I./include
+LIBRARIES=-L../syscallModule/lib
+all: libc
 
-all: clibs
-
-clibs:
-	$(GCC) $(GCCFLAGS) $(HEADERS) $(LIBRARIES) -lsyscalls -c libc.c
-	$(AR) rcs lib/libc.a libc.o
+libc:
+	$(GCC) $(GCCFLAGS) $(HEADERS) $(LIBRARIES) -lsyscall -c *.c
+	$(AR) rcs lib/liblibc.a *.o
 
 clean:
-	rm -rf *.o liblib*.a
+	rm -rf *.o lib/*.a
 
 .PHONY: all clean

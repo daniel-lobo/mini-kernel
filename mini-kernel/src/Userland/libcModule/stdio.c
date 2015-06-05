@@ -1,9 +1,10 @@
+#include <stdarg.h>
+#include <stdint.h>
 #include "./include/stdlib.h"
 #include "./include/stdio.h"
 #include "./include/ctype.h"
 #include "./include/string.h"
-#include "../syscall/include/syscall.h"
-#include <stdarg.h>
+#include "../syscallModule/include/syscall.h"
 
 FILE _stdin = { STDIN_FILENO };
 FILE _stdout = { STDOUT_FILENO };
@@ -35,7 +36,7 @@ getc(FILE *stream)
     }
     while (!read(stream->fd, (void *)&ch, 1))
     {
-        _hlt();
+
     }
     return (int)ch;
 }
@@ -380,8 +381,8 @@ read(int fd, void *buf, int count)
     return sc_read(fd, buf, count);
 }
 
-void
-write(int fd, const void *buf, int count)
+int
+write(int fd, void *buf, int count)
 {
-    sc_write(fd, buf, count);
+    return sc_write(fd, buf, count);
 }

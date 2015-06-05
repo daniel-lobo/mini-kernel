@@ -11,7 +11,7 @@
 
 extern uint64_t _syscall(uint64_t callid, ...);
 
-void sc_write(int fd, char* s, int len);
+int sc_write(int fd, char* s, int len);
 int sc_read(int fd, char* s, int len);
 uint32_t sc_rtc_get();
 void sc_rtc_set(uint32_t t);

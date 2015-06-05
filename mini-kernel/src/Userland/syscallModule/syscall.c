@@ -1,10 +1,10 @@
 #include <stdint.h>
-#include "syscall.h"
+#include "./include/syscall.h"
 
-void
+int
 sc_write(int fd, char * s, int len)
 {
-	_syscall((uint64_t) SYSCALL_WRITE, (uint64_t)fd, (uint64_t)s, (uint64_t)len);
+	return _syscall((uint64_t) SYSCALL_WRITE, (uint64_t)fd, (uint64_t)s, (uint64_t)len);
 }
 
 int

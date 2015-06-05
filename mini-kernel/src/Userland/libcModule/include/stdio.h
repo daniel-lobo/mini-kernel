@@ -46,7 +46,7 @@ int vscanf(const char *fmt, va_list ap);
 int vfscanf(FILE *f, const char *fmt, va_list ap);
 int vsscanf(char *str, const char *fmt, va_list ap);
 
-ssize_t write(int fd, const void *buf, size_t count);
-ssize_t read(int fd, void *buf, size_t count);
+int write(int fd, void *buf, int count);
+int read(int fd, void *buf, int count);
 
 #endif

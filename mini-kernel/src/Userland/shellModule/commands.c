@@ -1,5 +1,6 @@
-#include "../clibs/include/stdio.h"
+#include "../libcModule/include/stdio.h"
 #include "./include/commands.h"
+#include <stdint.h>
 
 int exec_echo(int argc, char **argv)
 {

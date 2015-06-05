@@ -1,8 +1,10 @@
-#include "../clibs/include/stdio.h"
-#include "../clibs/include/ctype.h"
-#include "../clibs/include/string.h"
+#include <stdint.h>
+#include "../libcModule/include/stdio.h"
+#include "../libcModule/include/ctype.h"
+#include "../libcModule/include/string.h"
 #include "./include/commands.h"
 #include "./include/shell.h"
+
 
 #define MAX_ARGS 1024
 #define MAX_ARGC 256

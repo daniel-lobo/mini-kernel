@@ -1,4 +1,5 @@
 #include "./include/stdlib.h"
+#include <stdint.h>
 #include "./include/string.h"
 #include "./include/ctype.h"
 
