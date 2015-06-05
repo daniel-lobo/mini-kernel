@@ -1,7 +1,7 @@
 #ifndef _VIDEO_
 #define _VIDEO_
 
-#define SCREEN_START ((uint16_t*)0xB8000)
+#define SCREEN_START 0xB8000
 #define SCREEN_WIDTH 80
 #define SCREEN_HEIGHT 25
 
@@ -34,7 +34,7 @@ typedef struct SCREEN
 
 void video_init();
 void video_clear();
-void video_put_char(int x, int y, char c, char format);
+void video_put_char(char c);
 void video_update_cursor();
 void video_update_screen();
 void video_scroll();
