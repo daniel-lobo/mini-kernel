@@ -1,5 +1,7 @@
 #include "../libcModule/include/stdio.h"
+#include "../libcModule/include/ctype.h"
 #include "./include/commands.h"
+#include "../syscallModule/include/syscall.h"
 #include <stdint.h>
 
 int exec_echo(int argc, char **argv)
@@ -36,25 +38,45 @@ exec_help(int argc, char **argv)
 int 
 exec_set_rtc(int argc, char **argv)
 {
-	return 0;
+    args_shift(1, &argc, &argv);
+
+    if (argc != 3){
+        printf("Incorrect clock format: srtc $H $M $S\n");
+    }
+
+    int hour = atoi(*argv++);
+    int min = atoi(*argv++);
+    int sec = atoi(*argv++);
+    
+    return sc_rtc_set(hour * 10000 + min * 100 + sec);
 }
 
 int
 exec_print_rtc(int argc, char **argv)
 {
+    unsigned long int rtc = sc_rtc_get();
+
+    int hour = rtc / 10000;
+    int min = (rtc / 100) % 100;
+    int sec = rtc % 100;
+
+    printf("%d:%d:%d\n", hour, min, sec);
+
 	return 0;
 }
 
 int
 exec_test_ss(int argc, char **argv)
 {
-	return 0;
+	return sc_screensaver_test();
 }
 
 int
 exec_set_ss(int argc, char **argv)
 {
-	return 0;
+    args_shift(1, &argc, &argv);
+
+	return sc_set_screensaver_timer(atoi(*argv));
 }
 
 int

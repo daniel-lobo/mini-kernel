@@ -18,28 +18,28 @@ get_update_in_progress_flag(void)
     return _inb(CMOS_DATA) & 0x80;
 }
 
-unsigned long int
+int
 rtc_time(void)
 {
-    /* TODO: check validity of time. Right now it is only useful as random
-     * number seed */
-    /* TODO: check update flag before reading * */
-    unsigned char sec  = read_cmos_register(0x00);
-    unsigned char min  = read_cmos_register(0x02);
-    unsigned char hour = read_cmos_register(0x04);
-    unsigned char day  = read_cmos_register(0x04);
-    unsigned char mon  = read_cmos_register(0x04);
-    unsigned char year = read_cmos_register(0x04);
-    /* the century register may not be available */
-    unsigned char century = read_cmos_register(0x04);
-    
-    year = year + (century - 1) * 100;
+    int sec = (int) read_cmos_register(0x00);
+    int min = (int) read_cmos_register(0x02);
+    int hour = (int) read_cmos_register(0x04);
 
-    /* copied from linux kernel/time.c:mktime */
-    return ((((unsigned long int)
-              (year/4 - year/100 + year/400 + 367*mon/12 + day) +
-              year*365 - 719499
-        )*24 + hour /* now have hours */
-      )*60 + min /* now have minutes */
-    )*60 + sec; /* finally seconds */
+    return sec + min * 100 + hour * 10000;
+}
+
+int
+rtc_set_time(int time)
+{
+    int hour = time / 10000;
+    int min = (time / 100) % 100;
+    int sec = time % 100;
+    
+    _outb(0x00, CMOS_ADDRESS);
+    _outb(sec, CMOS_DATA);
+    _outb(0x02, CMOS_ADDRESS);
+    _outb(min, CMOS_DATA);
+    _outb(0x04, CMOS_ADDRESS);
+    _outb(hour, CMOS_DATA);
+    return 0;
 }

@@ -27,11 +27,10 @@ syscall_handler(int number,
 		 */
 		break;
 	case SYSCALL_RTC:
-		retval = (uint32_t)rtc_time();
+		retval = rtc_time();
 		break;
 	case SYSCALL_RTC_SET:
-		/* TODO: set rtc time
-		retval = (int)rtc_set_time();*/
+		retval = rtc_set_time(param1);
 		break;
 	case SYSCALL_SS:
 		/* TODO: display ss
