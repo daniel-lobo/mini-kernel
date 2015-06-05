@@ -9,7 +9,7 @@
 #define MAX_ARGS 1024
 #define MAX_ARGC 256
 
-#define PROMPT ">"
+#define PROMPT "root@ArquiOS >"
 
 extern char bss;
 extern char endOfBinary;
