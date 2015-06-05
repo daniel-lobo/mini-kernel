@@ -38,7 +38,9 @@ void video_put_char(int x, int y, char c, char format);
 void video_update_cursor();
 void video_update_screen();
 void video_scroll();
-uint8_t formatted_char(COLOR fg, COLOR bg);
+
+uint8_t get_format(COLOR fg, COLOR bg);
+void clear_cur_screen(void);
 
 void video_write_char(char content, char format);
 void video_write_string(char * content, char format);
