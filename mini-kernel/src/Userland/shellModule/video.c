@@ -1,6 +1,4 @@
 #include "./include/video.h"
-#include "./include/kasm.h"
-#include "./include/naiveConsole.h"
 
 SCREEN screens[3];
 SCREEN cur_screen;
@@ -128,18 +126,6 @@ screen_mv_pos_forwards()
 	{
 		cur_screen.x = cur_screen.x + 1;
 	}
-}
-
-void
-video_update_cursor()
-{
-	unsigned short position = (cur_screen.y * SCREEN_WIDTH) + cur_screen.x;
- 
-    _outb(0x0F, 0x3D4);
-    _outb((unsigned char)(position & 0xFF), 0x3D5);
-
-    _outb(0x0E, 0x3D5);
-    _outb((unsigned char)((position >> 8) & 0xFF), 0x3D5);
 }
 
 void

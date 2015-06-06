@@ -19,7 +19,7 @@ syscall_handler(int number,
 	switch (number)
 	{
 	case SYSCALL_WRITE:
-		//video_write_char((char) param1);
+		video_write_char((char) param1);
 		retval = 0;	
 		break;
 	case SYSCALL_READ:

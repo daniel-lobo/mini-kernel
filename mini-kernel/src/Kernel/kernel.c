@@ -78,8 +78,7 @@ int main()
 	/* Inicializo pantalla */
 	video_init();
 
-	video_write_string("HOLAAAAA\n");
-	set_format(COLOR_RED, COLOR_BLACK);
-	video_write_string("HOLAAAAA");
+    ((EntryPoint)shell_module_address)();
+
 	return 0;
 }
