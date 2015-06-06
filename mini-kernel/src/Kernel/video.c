@@ -1,16 +1,18 @@
 #include "./include/video.h"
-
+#include "./include/kasm.h"
+#include "./include/naiveConsole.h"
 
 SCREEN screens[3];
 SCREEN cur_screen;
 
-char cur_format;
+uint8_t cur_format = 0x07;
 
-uint16_t * vga_hw = SCREEN_START;
+uint8_t * vga_hw = (uint8_t *) SCREEN_START;
 
 void
 video_init()
 {
+	video_clear();
 	cur_screen = screens[0];
 	cur_screen.x = 0;
 	cur_screen.y = 0;
@@ -20,8 +22,8 @@ void
 video_clear()
 {
 	clear_cur_screen();
-	video_update_cursor();
 	video_update_screen();
+	set_format(COLOR_WHITE, COLOR_BLACK);
 }
 
 void
@@ -29,46 +31,102 @@ clear_cur_screen(void)
 {
 	cur_screen.x = 0;
 	cur_screen.y = 0;
-	for (int i = 0; i < SCREEN_HEIGHT; i++)
+	for (int i = 0; i < SCREEN_WIDTH; i++)
 	{
-		for (int j = 0; j < SCREEN_WIDTH; j++)
+		for (int j = 0; j < SCREEN_HEIGHT; j++)
 		{
-			cur_screen.content[cur_screen.y * SCREEN_WIDTH + cur_screen.x] = ' ';
-			cur_screen.format[cur_screen.y * SCREEN_WIDTH + cur_screen.x] = 0x00;
+			cur_screen.content[j * SCREEN_WIDTH + i] = ' ';
+			cur_screen.format[j * SCREEN_WIDTH + i] = 0x00;
 		}
 	}
 }
 
 void
-video_write(char content)
+video_write_string(char * content)
 {
-	video_put_char(c, cur_format);
+	int i;
+	for (i = 0; content[i] != 0; i++)
+	{
+		video_write_char(content[i]);
+	}
+	video_update_screen();
 }
 
 void
-video_put_char(char content)
+video_write_char(char content)
+{	
+	switch(content){
+    case '\n':
+        video_nl();
+        break;
+    case '\t':
+        video_put_char(get_cur_position(), ' ');
+		screen_mv_pos_forwards();
+        break;
+    case '\b':
+    	video_put_char(get_cur_position() - 1, ' ');
+		screen_mv_pos_backwards();
+        break;
+    default:
+        video_put_char(get_cur_position(), content);
+		screen_mv_pos_forwards();
+        break;
+    }
+	video_update_screen();
+}
+
+int
+get_cur_position()
 {
-	if (SCREEN_HEIGHT * cur_screen.y + cur_screen.x != SCREEN_WIDTH * SCREEN_HEIGHT)
+	return SCREEN_WIDTH * cur_screen.y + cur_screen.x;
+}
+
+void
+video_put_char(int pos, char content)
+{
+	if (pos >= 0 && pos < SCREEN_WIDTH * SCREEN_HEIGHT)
 	{
-		switch(content){
-        case '\n':
-            video_nl();
-            break;
-        case '\t':
-            cur_screen.content[SCREEN_HEIGHT * cur_screen.y + cur_screen.x] = '      ';
-			cur_screen.format[SCREEN_HEIGHT * cur_screen.y + cur_screen.x] = cur_format;
-            break;
-        case '\b':
-            cur_screen.content[SCREEN_HEIGHT * cur_screen.y + cur_screen.x] = ' ';
-			cur_screen.format[SCREEN_HEIGHT * cur_screen.y + cur_screen.x] = cur_format;
-            break;
-        default:
-            cur_screen.content[SCREEN_HEIGHT * cur_screen.y + cur_screen.x] = content;
-			cur_screen.format[SCREEN_HEIGHT * cur_screen.y + cur_screen.x] = cur_format;
-            break;
-    	}
-		video_update_cursor();
+		cur_screen.content[pos] = content;
+		cur_screen.format[pos] = cur_format;
 		video_update_screen();
+	}
+}
+
+void
+screen_mv_pos_backwards()
+{
+	if (cur_screen.x == 0 )
+	{
+		if (cur_screen.y != 0)
+		{
+			cur_screen.x = SCREEN_WIDTH;
+			cur_screen.y = cur_screen.y - 1;
+		}
+	}
+	else
+	{
+		cur_screen.x = cur_screen.x - 1;
+	}
+}
+
+void
+screen_mv_pos_forwards()
+{
+	if (cur_screen.x == SCREEN_WIDTH )
+	{
+		if (cur_screen.y != SCREEN_HEIGHT)
+		{
+			cur_screen.x = 0;
+			cur_screen.y = cur_screen.y + 1;
+		}
+		else
+		{
+			video_scroll();
+		}
+	}
+	else
+	{
+		cur_screen.x = cur_screen.x + 1;
 	}
 }
 
@@ -87,26 +145,61 @@ video_update_cursor()
 void
 video_update_screen()
 {
-	int i = 0, j = 0;
+	vga_hw[(SCREEN_HEIGHT * SCREEN_WIDTH -1) * 2 ] = 'x';
+	int i, j;
 	for (i = 0; i < SCREEN_WIDTH; i++) 
 	{
 		for(j = 0; j < SCREEN_HEIGHT; j++)
 		{
-			vga_hw[(cur_screen.y * SCREEN_WIDTH + cur_screen.x) * 2] = cur_screen.content[cur_screen.y * SCREEN_WIDTH + cur_screen.x]);
-			vga_hw[(cur_screen.y * SCREEN_WIDTH + cur_screen.x) * 2 + 1] = cur_screen.format[cur_screen.y * SCREEN_WIDTH + cur_screen.x]);
+			vga_hw[(j * SCREEN_WIDTH + i) * 2] = cur_screen.content[j * SCREEN_WIDTH + i];
+			vga_hw[(j * SCREEN_WIDTH + i) * 2  + 1] = cur_screen.format[j * SCREEN_WIDTH + i];
 		}
 	}
 }
 
-uint8_t
-get_format(COLOR fg, COLOR bg)
+void
+set_format(COLOR fg, COLOR bg)
 {
-	return (  ((0xF0 & bg) >> 4) << 4) | (0x0F & fg) );
+	cur_format = (bg << 4) | (fg & 0x0F);
 }
 
 void
-video_nl(char * content, char format)
+video_nl()
 {
+	int dist_to_border = SCREEN_WIDTH - cur_screen.x;
+	int i;
+	for (i = 1; i < dist_to_border; i++){
+		cur_screen.content[cur_screen.y * SCREEN_WIDTH + cur_screen.x + i] = ' ';
+		cur_screen.format[cur_screen.y * SCREEN_WIDTH + cur_screen.x + i] = 0x00;
+	}
+	if (cur_screen.y < SCREEN_HEIGHT)
+	{
+		cur_screen.x = 0;
+		cur_screen.y = cur_screen.y + 1;
+	}
+	else
+	{
+		video_scroll();
+	}
+}
+
+void
+video_scroll()
+{
+	cur_screen.x = 0;
+	cur_screen.y = SCREEN_HEIGHT;
+	int i;
+
+	for (i = SCREEN_WIDTH; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
+	{
+		cur_screen.content[i - SCREEN_WIDTH] = cur_screen.content[i];
+		cur_screen.format[i - SCREEN_WIDTH] = cur_screen.content[i];
+	}
+	for (i = SCREEN_WIDTH * SCREEN_HEIGHT - SCREEN_WIDTH; i < SCREEN_WIDTH * SCREEN_HEIGHT; i ++)
+	{
+		cur_screen.content[i] = ' ';
+		cur_screen.format[i] = 0x00;
+	}
 
 }
 

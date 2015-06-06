@@ -1,7 +1,9 @@
 #include "./include/syscall.h"
 #include "./include/rtc.h"
 #include "./include/kasm.h"
+#include "./include/video.h"
 #include <stdint.h>
+#include "./include/naiveConsole.h"
 
 int
 syscall_handler(int number,
@@ -17,9 +19,8 @@ syscall_handler(int number,
 	switch (number)
 	{
 	case SYSCALL_WRITE:
-		/* TODO: print to scr
-		retval = ;
-		*/		
+		//video_write_char((char) param1);
+		retval = 0;	
 		break;
 	case SYSCALL_READ:
 		/* TODO: read from kb
@@ -39,6 +40,10 @@ syscall_handler(int number,
 	case SYSCALL_SS_SET:
 		/* TODO: set ss timer
 		retval = (int)rtc_time();*/
+		break;
+	case SYSCALL_SET_COLOR:
+		set_format(COLOR_WHITE, COLOR_BLACK);
+		retval = 0;
 		break;
 	default:
         /* TODO: Print error explanation */

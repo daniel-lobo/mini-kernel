@@ -4,7 +4,7 @@
 #include "../libcModule/include/string.h"
 #include "./include/commands.h"
 #include "./include/shell.h"
-
+#include "../syscallModule/include/syscall.h"
 
 #define MAX_ARGS 1024
 #define MAX_ARGC 256
@@ -38,7 +38,9 @@ sh_show_prompt()
 
     while (1)
     {
+        sc_set_format(4);
         printf("%s", PROMPT);
+        sc_set_format(7);
 
         gets(buf, sizeof(buf));
         trim(buf);

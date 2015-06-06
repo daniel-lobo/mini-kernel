@@ -1,9 +1,12 @@
 #include <stdint.h>
 
+#include "./include/naiveConsole.h"
+
 #include "./include/kasm.h"
 #include "./include/defs.h"
 #include "./include/keyboard.h"
 #include "./include/syscall.h"
+#include "./include/video.h"
 
 #include "./include/libc.h"
 
@@ -19,8 +22,6 @@ extern uint8_t endOfKernel;
 static const uint64_t PageSize = 0x1000;
 
 static void * const shell_module_address = (void*)0x400000;
-static void * const libc_module_address = (void*)0x500000;
-static void * const syscall_module_address = (void*)0x600000;
 
 IDTR idtr; /* IDTR description*/
 
@@ -42,11 +43,10 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
+
 	/* Load modules */
 	void * moduleAddresses[] = {
-		shell_module_address,
-		libc_module_address,
-		syscall_module_address
+		shell_module_address
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -58,14 +58,15 @@ void * initializeKernelBinary()
 }
 
 int main()
-	{
+{
 	_cli();
+
 
 	_get_idtr(&idtr);
 
 	/* setear los handlers en la IDT */
 	_set_idt_entry(0x20, &_pit_handler, &(idtr.base));
-  _set_idt_entry(0x21, &_keyboard_handler, &(idtr.base));
+	_set_idt_entry(0x21, &_keyboard_handler, &(idtr.base));
 	_set_idt_entry(0x80, &_syscall_handler, &(idtr.base));
 
 	/* Habilito interrupcion de teclado*/
@@ -73,7 +74,12 @@ int main()
 
 	/* Habilito interrupciones */
 	_sti();
-	_hlt();
 
+	/* Inicializo pantalla */
+	video_init();
+
+	video_write_string("HOLAAAAA\n");
+	set_format(COLOR_RED, COLOR_BLACK);
+	video_write_string("HOLAAAAA");
 	return 0;
 }

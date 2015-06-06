@@ -7,6 +7,7 @@
 #define SYSCALL_RTC_SET	3
 #define SYSCALL_SS		4
 #define SYSCALL_SS_SET	5
+#define SYSCALL_SET_COLOR	6
 #define SYSCALL_ERROR  -1
 
 int syscall_handler(int number,

@@ -1,8 +1,9 @@
+#include <stdint.h>
 #include "../libcModule/include/stdio.h"
 #include "../libcModule/include/ctype.h"
+#include "../libcModule/include/stdlib.h"
 #include "./include/commands.h"
 #include "../syscallModule/include/syscall.h"
-#include <stdint.h>
 
 int exec_echo(int argc, char **argv)
 {
@@ -47,8 +48,10 @@ exec_set_rtc(int argc, char **argv)
     int hour = atoi(*argv++);
     int min = atoi(*argv++);
     int sec = atoi(*argv++);
-    
-    return sc_rtc_set(hour * 10000 + min * 100 + sec);
+
+    sc_rtc_set(hour * 10000 + min * 100 + sec);
+
+    return 0;
 }
 
 int
@@ -68,15 +71,17 @@ exec_print_rtc(int argc, char **argv)
 int
 exec_test_ss(int argc, char **argv)
 {
-	return sc_screensaver_test();
+    sc_screensaver_test();
+	return 0;
 }
 
 int
 exec_set_ss(int argc, char **argv)
 {
     args_shift(1, &argc, &argv);
+    sc_set_screensaver_timer(atoi(*argv));
 
-	return sc_set_screensaver_timer(atoi(*argv));
+	return 0;
 }
 
 int

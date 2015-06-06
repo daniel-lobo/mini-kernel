@@ -36,3 +36,9 @@ sc_set_screensaver_timer(uint64_t t)
 {
 	_syscall((uint64_t) SYSCALL_SS_SET, t);
 }
+
+void
+sc_set_format(int color)
+{
+	_syscall((uint64_t) SYSCALL_SET_COLOR, color);
+}

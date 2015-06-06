@@ -29,24 +29,28 @@ typedef enum{
 typedef struct SCREEN
 {
 	int x, y;
-	int pos;
-	char content[SCREEN_WIDTH * SCREEN_HEIGHT]
-	char format[SCREEN_WIDTH * SCREEN_HEIGHT];
+	uint8_t content[SCREEN_WIDTH * SCREEN_HEIGHT];
+	uint8_t format[SCREEN_WIDTH * SCREEN_HEIGHT];
 } SCREEN;
 
 void video_init();
 void video_clear();
-void video_put_char(char c);
+
+void video_write_string(char * c);
+void video_write_char(char c);
+
+void video_put_char(int pos, char c);
+void video_nl();
+void screen_mv_pos_backwards();
+void screen_mv_pos_forwards();
+
 void video_update_cursor();
 void video_update_screen();
 void video_scroll();
 
-uint8_t get_format(COLOR fg, COLOR bg);
+void set_format(COLOR fg, COLOR bg);
 void clear_cur_screen(void);
-
-void video_write_char(char content, char format);
-void video_write_string(char * content, char format);
-void video_nl(char * content, char format);
+int get_cur_position();
 
 void video_init_screensaver();
 void video_set_screensaver();
