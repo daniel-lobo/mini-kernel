@@ -1,5 +1,6 @@
 #include "./include/video.h"
 
+
 SCREEN screens[3];
 SCREEN cur_screen;
 
@@ -100,7 +101,7 @@ video_update_screen()
 uint8_t
 get_format(COLOR fg, COLOR bg)
 {
-	return (((0xF0 & bg) >> 4) << 4) | (0x0F & fg));
+	return (  ((0xF0 & bg) >> 4) << 4) | (0x0F & fg) );
 }
 
 void

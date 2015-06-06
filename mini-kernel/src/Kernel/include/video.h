@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #ifndef _VIDEO_
 #define _VIDEO_
 

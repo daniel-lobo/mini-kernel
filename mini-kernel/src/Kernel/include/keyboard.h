@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #ifndef _KB_
 #define _KB_
 
@@ -64,6 +66,14 @@ void keyboard_handler();
 // Returns if the buffer is full or not
 static int k_buffer_is_full(void);
 // para el manejo de las teclas de estado (SHIFT y CAPSLOCK)
-static void set_key_state(unsigned char scancode);
+void set_key_state(uint64_t scancode);
 
+void sendToBuffer(char scancode);
+int getKchar(void);
+int k_buffer_is_empty(void);
+char return_character_position(void);
+int kbd_shifted(void);
+int kbd_alted(void);
+int kbd_capitalized(void);
 #endif
+
