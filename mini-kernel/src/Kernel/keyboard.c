@@ -128,14 +128,13 @@ bool updateStates(char key) {
 		currentKeyboard.state.shifted = 1;
 		return true;
 	}
-	else if (key == RIGHT_SHIFT_BREAK || key == LEFT_SHIFT_BREAK) {
-		currentKeyboard.state.shifted = 0;
-		return true;
-	}
 	else if (key == CAPS_LOCK) {
 		currentKeyboard.state.capsLocked = !currentKeyboard.state.capsLocked;
 		return true;
 	}
+	else if (key == RIGHT_SHIFT_BREAK || key == LEFT_SHIFT_BREAK) {
+		currentKeyboard.state.shifted = 0;
+		}
 	else if (key == CONTROL_R) {
 		currentKeyboard.state.alted = !currentKeyboard.state.alted;
 		return true;
@@ -158,7 +157,11 @@ int indexOfKey() {
 
 void keyboard_handler(uint64_t scancode) {
 	int index= indexOfKey();
+
 	char key = kbd_EN[(int)scancode][index];
+	if(scancode & 0x80){
+		return;
+	}
 	if (updateStates(key) == true) {
 		return;
 	}
