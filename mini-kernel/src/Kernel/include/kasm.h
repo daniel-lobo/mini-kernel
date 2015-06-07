@@ -1,4 +1,5 @@
 #include "defs.h"
+#include <stdint.h>
 
 void _outb(unsigned char value, unsigned short int port);
 int _inb(unsigned short int port);
@@ -8,9 +9,9 @@ void _sti();
 
 void _hlt();
 
-void _set_idt_entry(unsigned char index, void * handler, void * base);
+void _set_idt_entry(unsigned char index, void * handler, unsigned long int base);
 
-int _syscall(int number, int param1, int param2, int param3, int param4, int param5);
+uint64_t _syscall(uint64_t callid, ...);
 
 void _mask_pic();  /* Escribe mascara de PIC1 */
 

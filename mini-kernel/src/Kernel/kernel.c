@@ -61,14 +61,13 @@ int main()
 {
 	_cli();
 
-
 	_get_idtr(&idtr);
 
 	/* setear los handlers en la IDT */
-	_set_idt_entry(0x20, &_pit_handler, &(idtr.base));
-	_set_idt_entry(0x21, &_keyboard_handler, &(idtr.base));
-	_set_idt_entry(0x80, &_syscall_handler, &(idtr.base));
-
+	_set_idt_entry(0x20, &_pit_handler, idtr.base);
+	_set_idt_entry(0x21, &_keyboard_handler, idtr.base);
+	_set_idt_entry(0x80, &_syscall_handler, idtr.base);
+	
 	/* Habilito interrupcion de teclado*/
 	_mask_pic();
 
@@ -78,7 +77,7 @@ int main()
 	/* Inicializo pantalla */
 	video_init();
 
-    ((EntryPoint)shell_module_address)();
-
+	_syscall(0, 0, "hola", 4);
+	//syscall_handler(0,1,2,3,4,5);
 	return 0;
 }

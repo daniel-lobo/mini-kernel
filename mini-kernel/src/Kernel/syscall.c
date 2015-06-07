@@ -3,7 +3,6 @@
 #include "./include/kasm.h"
 #include "./include/video.h"
 #include <stdint.h>
-#include "./include/naiveConsole.h"
 
 int
 syscall_handler(int number,
@@ -19,6 +18,7 @@ syscall_handler(int number,
 	switch (number)
 	{
 	case SYSCALL_WRITE:
+		    
 		video_write_char((char) param1);
 		retval = 0;	
 		break;

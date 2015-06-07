@@ -1,11 +1,10 @@
 #include <stdint.h>
+#include "./include/commands.h"
+#include "./include/shell.h"
 #include "../libcModule/include/stdio.h"
 #include "../libcModule/include/ctype.h"
 #include "../libcModule/include/string.h"
-#include "./include/commands.h"
-#include "./include/shell.h"
 #include "../syscallModule/include/syscall.h"
-#include "./include/video.h"
 
 #define MAX_ARGS 1024
 #define MAX_ARGC 256
@@ -28,11 +27,8 @@ command_t commands[] = {
 void
 sh_init(void)
 {
-    video_init();
-    video_write_string("K ASE");
     memset(&bss, 0, &endOfBinary - &bss);
     sh_show_prompt();
-
 }
 
 void
