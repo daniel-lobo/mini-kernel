@@ -26,7 +26,7 @@ command_t commands[] = {
 };
 
 void
-sh_init(void)
+main(void)
 {
     memset(&bss, 0, &endOfBinary - &bss);
     sh_show_prompt();
