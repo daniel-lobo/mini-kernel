@@ -1,3 +1,8 @@
+#ifndef _KB_
+#define _KB_
+
+#include <stdint.h>
+
 #define LEFT_SHIFT_MAKE   (char)257
 #define RIGHT_SHIFT_MAKE    (char)258
 #define CAPS_LOCK           (char)259
@@ -15,6 +20,7 @@
 #define ALTEDCOLUMN 4
 
 #define BUFFER_SIZE     256
+
 typedef struct {
 	unsigned int shifted;
 	unsigned int alted;
@@ -31,17 +37,13 @@ typedef struct {
 typedef enum {false, true} bool;
 
 bool bufferIsEmpty(void);
-
 bool bufferIsFull(void);
-
 void initializeBuffer();
-
 bool sendToBuffer(char key);
-
 bool updateStates(char key);
-
 int indexOfKey();
-
 void keyboard_handler(uint64_t scancode);
+char * get_buffer();
+void clean_buffer();
 
-void clearBuffer();
+#endif

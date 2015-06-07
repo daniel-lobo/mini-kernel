@@ -12,7 +12,12 @@ void write_handler(int fd, char * s, int len)
 
 uint32_t read_handler(int fd, char * s, int len)
 {
-	return 0;
+	if (bufferIsEmpty()){
+		return 0;
+	}
+	s = get_buffer();
+	clean_buffer();
+	return 1;
 }
 
 uint32_t rtc_handler()

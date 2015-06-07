@@ -94,11 +94,6 @@ char kbd_EN[][4] = {
 	{ 0x57, NOCHAR, NOCHAR, NOCHAR },//f11
 	{ 0x58, NOCHAR, NOCHAR, NOCHAR }//f12
 };
-void clearBuffer() {
-	for (i = 0; i < BUFFER_SIZE; i++) {
-		currentKeyboard.buffer[i] = 0;
-	}
-}
 bool bufferIsEmpty(void) {
 	return currentKeyboard.enqueuePos == currentKeyboard.dequeuePos;
 }
@@ -178,4 +173,15 @@ void keyboard_handler(uint64_t scancode) {
 	}
 	video_refresh();
 	return;
+}
+
+char * get_buffer()
+{
+	return (char *) currentKeyboard.buffer;
+}
+
+void clean_buffer()
+{
+	currentKeyboard.enqueuePos = 0;
+	currentKeyboard.dequeuePos = 0;
 }
