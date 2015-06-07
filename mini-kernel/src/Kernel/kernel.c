@@ -64,6 +64,10 @@ int main()
 	/* Inicializar driver de video */
 	video_init();
 
+	/* Set screensaver up */
+	video_init_screensaver();
+
+	//video_set_screensaver();
 	//_syscall(0, 0, "hola", 4);
 	//syscall_handler(0,1,2,3,4,5);
 	return 0;

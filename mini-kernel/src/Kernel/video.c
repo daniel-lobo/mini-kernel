@@ -1,14 +1,31 @@
 #include "./include/video.h"
 #include "./include/kasm.h"
-#include "./include/naiveConsole.h"
 #include "./include/color.h"
 
-SCREEN screens[3];
+SCREEN screens[2];
 SCREEN cur_screen;
 
 uint8_t cur_format = 0x00;
 
 uint8_t * vga_hw = (uint8_t *) SCREEN_START;
+
+// 30 seg default
+uint64_t scrensaver_timer = 426;
+
+void
+ss_clock()
+{
+	scrensaver_timer--;
+	if (scrensaver_timer < 0.0001){
+		video_set_screensaver();
+	}
+}
+
+void
+set_ss_timer(uint64_t t)
+{
+	scrensaver_timer = t/1.42857;
+}
 
 void
 video_init()
@@ -134,7 +151,7 @@ screen_mv_pos_forwards()
 void
 video_update_cursor()
 {
-	unsigned short position = (cur_screen.y * SCREEN_WIDTH) + cur_screen.x;
+	unsigned short position = (cur_screen.y * SCREEN_WIDTH) + cur_screen.x + 1;
  
     _outb(0x0F, 0x3D4);
     _outb((unsigned char)(position & 0xFF), 0x3D5);
@@ -207,23 +224,32 @@ video_scroll()
 void
 video_init_screensaver()
 {
-	
+	char * ss = "This is a screensaver. Press any key to leave.";
+	int i;
+	for (i = 0; ss[i] != '\0'; i++)
+	{
+		screens[0].content[i] = ss[i];
+		screens[0].format[i] = 0x04;
+	}
 }
 
 void
 video_set_screensaver()
 {
-
+	video_save_screen();
+	cur_screen = screens[0];
+	video_update_screen();
 }
 
 void
 video_set_terminal()
 {
-
+	cur_screen = screens[1];
+	video_update_screen();
 }
 
 void
-video_backup_screen()
+video_save_screen()
 {
-
-}
+	screens[1] = cur_screen;
+}	
