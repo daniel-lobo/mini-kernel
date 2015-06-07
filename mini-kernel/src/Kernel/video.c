@@ -4,6 +4,7 @@
 
 SCREEN screens[2];
 SCREEN cur_screen;
+int ss_on = 0;
 
 uint8_t cur_format = 0x00;
 
@@ -101,7 +102,7 @@ screen_mv_pos_backwards()
 {
 	if (cur_screen.x == 0 )
 	{
-		if (cur_screen.y != 0)
+		if (cur_screen.y > 0)
 		{
 			cur_screen.x = SCREEN_WIDTH;
 			cur_screen.y = cur_screen.y - 1;
@@ -118,7 +119,7 @@ screen_mv_pos_forwards()
 {
 	if (cur_screen.x == SCREEN_WIDTH )
 	{
-		if (cur_screen.y != SCREEN_HEIGHT)
+		if (cur_screen.y + 1 < SCREEN_HEIGHT)
 		{
 			cur_screen.x = 0;
 			cur_screen.y = cur_screen.y + 1;
@@ -159,6 +160,7 @@ video_update_screen()
 			vga_hw[(j * SCREEN_WIDTH + i) * 2  + 1] = cur_screen.format[j * SCREEN_WIDTH + i];
 		}
 	}
+	video_update_cursor();
 }
 
 void
@@ -170,13 +172,7 @@ set_format(COLOR fg, COLOR bg)
 void
 video_nl()
 {
-	int dist_to_border = SCREEN_WIDTH - cur_screen.x;
-	int i;
-	for (i = 1; i < dist_to_border; i++){
-		cur_screen.content[cur_screen.y * SCREEN_WIDTH + cur_screen.x + i] = ' ';
-		cur_screen.format[cur_screen.y * SCREEN_WIDTH + cur_screen.x + i] = 0x00;
-	}
-	if (cur_screen.y < SCREEN_HEIGHT)
+	if (cur_screen.y + 1 < SCREEN_HEIGHT)
 	{
 		cur_screen.x = 0;
 		cur_screen.y = cur_screen.y + 1;
@@ -185,26 +181,34 @@ video_nl()
 	{
 		video_scroll();
 	}
+	int dist_to_border = SCREEN_WIDTH - cur_screen.x;
+	int i;
+	for (i = 1; i < dist_to_border; i++)
+	{
+		cur_screen.content[cur_screen.y * SCREEN_WIDTH + cur_screen.x + i] = ' ';
+		cur_screen.format[cur_screen.y * SCREEN_WIDTH + cur_screen.x + i] = 0x00;
+	}
+
 }
 
 void
 video_scroll()
 {
-	cur_screen.x = 0;
-	cur_screen.y = SCREEN_HEIGHT;
+	
 	int i;
 
-	for (i = SCREEN_WIDTH; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
+	for (i = 0; i < (SCREEN_WIDTH - 1) * SCREEN_HEIGHT; i++)
 	{
-		cur_screen.content[i - SCREEN_WIDTH] = cur_screen.content[i];
-		cur_screen.format[i - SCREEN_WIDTH] = cur_screen.content[i];
+		cur_screen.content[i] = cur_screen.content[i + SCREEN_WIDTH];
+		cur_screen.format[i] = cur_screen.format[i + SCREEN_WIDTH];
 	}
-	for (i = SCREEN_WIDTH * SCREEN_HEIGHT - SCREEN_WIDTH; i < SCREEN_WIDTH * SCREEN_HEIGHT; i ++)
+	for (i = (SCREEN_WIDTH - 1) * SCREEN_HEIGHT; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
 	{
 		cur_screen.content[i] = ' ';
 		cur_screen.format[i] = 0x00;
 	}
-
+	cur_screen.x = 0;
+	cur_screen.y = SCREEN_HEIGHT - 1;
 }
 
 void
@@ -225,6 +229,7 @@ video_set_screensaver()
 	video_save_screen();
 	cur_screen = screens[0];
 	video_update_screen();
+	ss_on = 1;
 }
 
 void
@@ -235,6 +240,7 @@ video_set_terminal()
 		cur_screen = screens[1];
 		set_ss_timer(aux);
 		video_update_screen();
+		ss_on = 0;
 	}
 }
 
@@ -254,7 +260,7 @@ video_save_screen()
 int
 is_ss_on()
 {
-	if (&cur_screen == &screens[0])
+	if (ss_on)
 	{
 		return 1;
 	}
