@@ -1,19 +1,19 @@
-global libasm
-
-global _syscall
-
-global _pit_handler
-global _keyboard_handler, _keyboard_done
-global _syscall_handler
-
-global _get_idtr, _set_idt_entry, _mask_pic, _cli, _sti
+global _enable_pic
+global _set_handlers
 global _outb
 global _inb
-global _hlt
 
 extern pit_handler
 extern keyboard_handler
 extern syscall_handler
+extern write_handler
+extern read_handler
+extern rtc_handler
+extern rtc_set_handler
+extern ss_test_handler
+extern ss_set_handler
+extern format_set_handler
+
 _outb:
     push    rbp
     mov     rbp, rsp
@@ -34,40 +34,167 @@ _inb:
     pop     rbp
 	ret
 
-_hlt:
-	hlt
-	ret
+create_gate:
+    push rdi
+    push rax
+    shl rdi, 4                   ; quickly multiply rdi by 16
+    stosw                                   ; store the low word (15..0)
+    shr rax, 16
+    add rdi, 4                   ; skip the gate marker
+    stosw                                   ; store the high word (31..16)
+    shr rax, 16
+    stosd                                  ; store the high dword (63..32)
+    pop rax
+    pop rdi
+    ret
 
-_cli:
+IDTR:                                         ; Interrupt Descriptor Table Register
+    dw 256*16-1                    ; limit of IDT (size minus one) (4096 bytes - 1)
+    dq 0x0000000000000000          ; linear address of IDT
+
+_set_handlers:
+    mov rdi, 0x80                ; Set up Software Interrups handler
+    mov rax, sys_soft
+    call create_gate
+    mov rdi, 0x21                ; Set up Keyboard handler
+    mov rax, sys_keyboard
+    call create_gate
+    mov rdi, 0x20                ; Set up PIT handler
+    mov rax, sys_pit
+    call create_gate
+    lidt [IDTR]                    ; load IDT register
+    ret
+
+align 16
+sys_soft:                                 ; Interrupciones de software, int 80h
+    push rdi
+    cmp rdi, 0
+    jz sys_write
+    cmp rdi, 1
+    jz sys_read
+    cmp rdi, 2
+    jz sys_rtc
+    cmp rdi, 3
+    jz sys_rtc_set
+    cmp rdi, 4
+    jz sys_ss_test
+    cmp rdi, 5
+    jz sys_ss_set
+    cmp rdi, 6
+    jz sys_set_color
+    cmp rdi, 7
+    jz hang
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_write:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call write_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_read:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call read_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_rtc:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call rtc_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_rtc_set:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call rtc_set_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_ss_test:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call ss_test_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_ss_set:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call ss_set_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_set_color:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call format_set_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+hang:
     cli
-    ret
+    hlt                                    
+    jmp hang
 
-_sti:
-    sti
-    ret
-
-_set_idt_entry:
-    shl rdi, 4                  ; quickly multiply rdi by 16
-    add rdi, rdx
-    stosw                       ; store the low word (15..0)
-    shr rsi, 16
-    add rdi, 4                  ; skip the gate marker
-    stosw                       ; store the high word (31..16)
-    shr rsi, 16
-    stosd                       ; store the high dword (63..32)
-    ret
-
-_get_idtr:
-    sidt [rdi]
-    ret
-
-_mask_pic:
+_enable_pic:
     in al, 0x21
     mov al, 11111000b           ; Enable Keyboard
     out 0x21, al
+    sti
     ret
 
-_pit_handler:                 ; INT 0x08 Handler (Timertick)
+sys_pit:                 ; INT 0x08 Handler (Timertick)
     push rdi
     push rax
     call pit_handler
@@ -77,49 +204,15 @@ _pit_handler:                 ; INT 0x08 Handler (Timertick)
     pop rdi
     iretq
 
-; _keyboard_handler:                  ; INT 0x09 Handler (Keyboard)
-;     push rdi
-;     push rax
-;     xor eax, eax
-;     in al, 0x60                ; Get the scancode from the keyboard
-;     mov rdi, rax
-;     call keyboard_handler
-
-_keyboard_done:
-    mov al, 0x20                ; Acknowledge the IRQ
-    out 0x20, al
-    pop rax
-    pop rdi
-    iretq
-
-_syscall_handler:					; INT 0x80 Handler (Syscall)
+sys_keyboard:                  ; INT 0x09 Handler (Keyboard)
     push rdi
     push rax
-	call syscall_handler
+    xor eax, eax
+    in al, 0x60                ; Get the scancode from the keyboard
+    mov rdi, rax
+    call keyboard_handler
     mov al, 0x20                ; Acknowledge the IRQ
     out 0x20, al
     pop rax
     pop rdi
     iretq
-
-_syscall:
-    push rbp
-    mov rbp, rsp
-    push rbx
-    push rsp
-    push rbp
-    push r12
-    push r13
-    push r14
-    push r15
-    int 80h
-    pop r15
-    pop r14
-    pop r13
-    pop r12
-    pop rbp
-    pop rsp
-    pop rbx
-    mov rsp, rbp
-    pop rbp
-    ret

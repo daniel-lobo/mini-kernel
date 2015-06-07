@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "./include/syscall.h"
+#include "./include/color.h"
 
 int
 sc_write(int fd, char * s, int len)

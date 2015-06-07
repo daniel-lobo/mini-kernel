@@ -38,9 +38,9 @@ sh_show_prompt()
 
     while (1)
     {
-        sc_set_format(4);
+        sc_set_format(RED);
         printf("%s", PROMPT);
-        sc_set_format(7);
+        sc_set_format(WHITE);
 
         gets(buf, sizeof(buf));
         trim(buf);

@@ -1,7 +1,5 @@
 #include <stdint.h>
 
-#include "./include/naiveConsole.h"
-
 #include "./include/kasm.h"
 #include "./include/defs.h"
 #include "./include/keyboard.h"
@@ -59,25 +57,14 @@ void * initializeKernelBinary()
 
 int main()
 {
-	_cli();
+	/* IDT & handlers setup */
+	_set_handlers();
+	_enable_pic();
 
-	_get_idtr(&idtr);
-
-	/* setear los handlers en la IDT */
-	_set_idt_entry(0x20, &_pit_handler, idtr.base);
-	// _set_idt_entry(0x21, &_keyboard_handler, idtr.base);
-	_set_idt_entry(0x80, &_syscall_handler, idtr.base);
-	
-	/* Habilito interrupcion de teclado*/
-	_mask_pic();
-
-	/* Habilito interrupciones */
-	_sti();
-
-	/* Inicializo pantalla */
+	/* Inicializar driver de video */
 	video_init();
 
-	_syscall(0, 0, "hola", 4);
+	//_syscall(0, 0, "hola", 4);
 	//syscall_handler(0,1,2,3,4,5);
 	return 0;
 }

@@ -1,11 +1,12 @@
 #include "./include/video.h"
 #include "./include/kasm.h"
 #include "./include/naiveConsole.h"
+#include "./include/color.h"
 
 SCREEN screens[3];
 SCREEN cur_screen;
 
-uint8_t cur_format = 0x07;
+uint8_t cur_format = 0x00;
 
 uint8_t * vga_hw = (uint8_t *) SCREEN_START;
 
@@ -23,7 +24,7 @@ video_clear()
 {
 	clear_cur_screen();
 	video_update_screen();
-	set_format(COLOR_WHITE, COLOR_BLACK);
+	set_format(WHITE, BLACK);
 }
 
 void
