@@ -1,3 +1,8 @@
+#ifndef _KB_
+#define _KB_
+
+#include <stdint.h>
+
 #define LEFT_SHIFT_MAKE   (char)257
 #define RIGHT_SHIFT_MAKE    (char)258
 #define CAPS_LOCK           (char)259
@@ -29,3 +34,19 @@ typedef struct {
 } KEYBOARD;
 
 typedef enum {false, true} bool;
+
+bool bufferIsEmpty(void);
+
+bool bufferIsFull(void);
+
+void initializeBuffer();
+
+bool sendToBuffer(char key);
+
+bool updateStates(char key);
+
+int indexOfKey();
+
+void keyboard_handler(uint64_t scancode);
+
+#endif

@@ -17,10 +17,7 @@ typedef struct SCREEN
 
 void video_init();
 void video_clear();
-
-void ss_clock();
-
-void set_ss_timer(uint64_t t);
+void video_refresh();
 
 void video_write_string(char * c);
 void video_write_char(char c);
@@ -43,5 +40,9 @@ void video_set_screensaver();
 void video_set_terminal();
 void video_save_screen();
 
-#endif
+void ss_clock();
+void ss_reset_clock();
+void set_ss_timer(uint64_t t);
+int is_ss_on();
 
+#endif

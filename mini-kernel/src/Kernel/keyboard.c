@@ -1,5 +1,6 @@
 #include "./include/keyboard.h"
 #include "./include/kasm.h"
+#include "./include/video.h"
 #include <stdint.h>
 
 KEYBOARD currentKeyboard;
