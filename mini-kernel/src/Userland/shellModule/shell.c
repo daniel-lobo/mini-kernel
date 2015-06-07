@@ -5,6 +5,7 @@
 #include "../libcModule/include/ctype.h"
 #include "../libcModule/include/string.h"
 #include "../syscallModule/include/syscall.h"
+#include "./include/color.h"
 
 #define MAX_ARGS 1024
 #define MAX_ARGC 256
