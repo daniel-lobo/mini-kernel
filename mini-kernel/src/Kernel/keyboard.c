@@ -165,12 +165,11 @@ void keyboard_handler(uint64_t scancode) {
 		if(key!=NOCHAR){
 		//agrego al buffer
 		sendToBuffer(key);
-		//llamo a putc	
+		// testeo handler
+		video_write_char(key);
 		}
 		
 	}
+	video_refresh();
 	return;
 }
-
-
-

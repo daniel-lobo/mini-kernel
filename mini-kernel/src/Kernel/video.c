@@ -14,25 +14,10 @@ uint64_t scrensaver_timer = 428;
 uint64_t aux = 428;
 
 void
-ss_clock()
-{
-	scrensaver_timer--;
-	if (scrensaver_timer < 0.0001){
-		video_set_screensaver();
-	}
-}
-
-void
-set_ss_timer(uint64_t t)
-{
-	scrensaver_timer = aux = t/1.42857;
-}
-
-void
 video_init()
 {
 	video_clear();
-	cur_screen = screens[0];
+	cur_screen = screens[1];
 	cur_screen.x = 0;
 	cur_screen.y = 0;
 }
@@ -245,9 +230,19 @@ video_set_screensaver()
 void
 video_set_terminal()
 {
-	cur_screen = screens[1];
-	set_ss_timer(aux);
-	video_update_screen();
+	if (is_ss_on())
+	{		
+		cur_screen = screens[1];
+		set_ss_timer(aux);
+		video_update_screen();
+	}
+}
+
+void
+video_refresh()
+{
+	ss_reset_clock();
+	video_set_terminal();
 }
 
 void
@@ -255,3 +250,35 @@ video_save_screen()
 {
 	screens[1] = cur_screen;
 }	
+
+int
+is_ss_on()
+{
+	if (&cur_screen == &screens[0])
+	{
+		return 1;
+	}
+	return 0;
+}
+
+void
+ss_clock()
+{
+	scrensaver_timer--;
+	if (scrensaver_timer < 0.0001)
+	{
+		video_set_screensaver();
+	}
+}
+
+void
+ss_reset_clock()
+{
+	scrensaver_timer = aux;
+}
+
+void
+set_ss_timer(uint64_t t)
+{
+	scrensaver_timer = aux = t/1.42857;
+}

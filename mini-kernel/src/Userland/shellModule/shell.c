@@ -10,7 +10,7 @@
 #define MAX_ARGS 1024
 #define MAX_ARGC 256
 
-#define PROMPT "root@ArquiOS >"
+#define PROMPT "root@ArquiOS"
 
 extern char bss;
 extern char endOfBinary;
@@ -30,13 +30,7 @@ main(void)
 {
 
     memset(&bss, 0, &endOfBinary - &bss);
-    char * v = (char*)0xB8000;
-    v[1] = 'x';
-    while (1)
-    {
-        
-    }
-    //sh_show_prompt();
+    sh_show_prompt();
 	return 0;
 }
 
@@ -50,6 +44,7 @@ sh_show_prompt()
         sc_set_format(RED);
         printf("%s", PROMPT);
         sc_set_format(WHITE);
+        printf(">");
 
         gets(buf, sizeof(buf));
         trim(buf);
@@ -149,3 +144,4 @@ sh_tokenize(char buf[], int *argc, char *argv[])
         buf++;
     }
 }
+

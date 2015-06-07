@@ -1,7 +1,7 @@
 include ../Makefile.inc
 
 MODULE = sampleCodeModule.bin
-SOURCES = $(wildcard *.c)
+SOURCES = shell.c commands.c
 HEADERS = -I./include -I../libcModule/include -I../syscallModule/include
 LIBRARIES = -L../libcModule/lib -L../syscallModule/lib
 

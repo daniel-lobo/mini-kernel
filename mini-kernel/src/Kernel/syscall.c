@@ -2,6 +2,7 @@
 #include "./include/rtc.h"
 #include "./include/kasm.h"
 #include "./include/video.h"
+#include "./include/keyboard.h"
 #include <stdint.h>
 
 void write_handler(int fd, char * s, int len)
@@ -9,9 +10,9 @@ void write_handler(int fd, char * s, int len)
 	video_write_string(s);
 }
 
-void read_handler(int fd, char * s, int len)
+uint32_t read_handler(int fd, char * s, int len)
 {
-
+	return 0;
 }
 
 uint32_t rtc_handler()
