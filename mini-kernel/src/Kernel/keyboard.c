@@ -1,335 +1,176 @@
-//#include "./include/keyboard.h"
+#include "./include/keyboard.h"
 #include "./include/kasm.h"
 #include <stdint.h>
-// /*/*
-// /* El Buffer de Teclado guarda scan codes */
-// unsigned char keyboard_buffer[KB_SIZE];
 
-// /* Indices para iterar sobre el buffer ciclico */
-// int kb_actual = 0;
-// int kb_last   = 0;
-// int kb_cant   = 0;
-
-// /* Estados para estados de shift, control, capslock estan en cero */
-// int acute    = 0;
-// int ctrl     = 0;
-// int shift    = 0;
-// int alt      = 0;
-// int capslock = 0;
-
-// /* Variable que guarda la ultima tecla leida */
-// unsigned char last_key_read = 0;
-
-// // English keyboard: with the letters corresponding to shift
-// static unsigned int kbd_EN[][2] = { { NPRTBL, NPRTBL },/*000*/
-// 	{ NPRTBL, NPRTBL },/*001 ESCAPE*/
-// 	{ '1', '!' }, /*002*/
-// 	{ '2', '\"' }, /*003*/
-// 	{ '3', '#' }, /*004*/
-// 	{ '4', '$' }, /*005*/
-// 	{ '5', '%' }, /*006*/
-// 	{ '6', '&' }, /*007*/
-// 	{ '7', '/' }, /*008*/
-// 	{ '8', '(' }, /*009*/
-// 	{ '9', ')' }, /*010*/
-// 	{ '0', '=' }, /*011*/
-// 	{ '\'', '?' }, /*012*/
-// 	{ '\n', '\n' }, /*013*/
-// 	{ '\b', '\b' }, /*014 BACKSPACE*/
-// 	{ '\t', '\t' }, /*015 TAB*/
-// 	{ 'q', 'Q' }, /*016*/
-// 	{ 'w', 'W' }, /*017*/
-// 	{ 'e', 'E' }, /*018*/
-// 	{ 'r', 'R' }, /*019*/
-// 	{ 't', 'T' }, /*020*/
-// 	{ 'y', 'Y' }, /*021*/
-// 	{ 'u', 'U' }, /*022*/
-// 	{ 'i', 'I' }, /*023*/
-// 	{ 'o', 'O' }, /*024*/
-// 	{ 'p', 'P' }, /*025*/
-// 	{ '\'', '\"' }, /*026*/
-// 	{ '+', '*' }, /*027*/
-// 	{ '\n', '\n' }, /*028*/
-// 	{ NPRTBL, NPRTBL },/*029 CTRL IZQ*/
-// 	{ 'a', 'A' }, /*030*/
-// 	{ 's', 'S' }, /*031*/
-// 	{ 'd', 'D' }, /*032*/
-// 	{ 'f', 'F' }, /*033*/
-// 	{ 'g', 'G' }, /*034*/
-// 	{ 'h', 'H' }, /*035*/
-// 	{ 'j', 'J' }, /*036*/
-// 	{ 'k', 'K' }, /*037*/
-// 	{ 'l', 'L' }, /*038*/
-// 	{ '.', ';' }, /*039*/
-// 	{ '{', '[' }, /*040*/
-// 	{ '}', ']' }, /*041*/
-// 	{ NPRTBL, NPRTBL },/*042 SHIFT IZQ*/
-// 	{ '<', '>' }, /*043*/
-// 	{ 'z', 'Z' }, /*044*/
-// 	{ 'x', 'X' }, /*045*/
-// 	{ 'c', 'C' }, /*046*/
-// 	{ 'v', 'V' }, /*047*/
-// 	{ 'b', 'B' }, /*048*/
-// 	{ 'n', 'N' }, /*049*/
-// 	{ 'm', 'M' }, /*050*/
-// 	{ ',', ';' }, /*051*/
-// 	{ '.', ':' }, /*052*/
-// 	{ '?', '?' }, /*053*/
-// 	{ NPRTBL, NPRTBL },/*054 SHIFT DER*/
-// 	{ '*', '*' }, /*055 KEY **/
-// 	{ NPRTBL, NPRTBL },/*056 ALT IZQ*/
-// 	{ ' ', ' ' }, /*057 SPACE*/
-// 	{ NPRTBL, NPRTBL }, /*058 CAPSLOCK*/
-// 	{ NPRTBL, NPRTBL }, /*059 F1*/
-// 	{ NPRTBL, NPRTBL }, /*060 F2*/
-// 	{ NPRTBL, NPRTBL }, /*061 F3*/
-// 	{ NPRTBL, NPRTBL }, /*062 F4*/
-// 	{ NPRTBL, NPRTBL }, /*063 F5*/
-// 	{ NPRTBL, NPRTBL }, /*064 F6*/
-// 	{ NPRTBL, NPRTBL }, /*065 F7*/
-// 	{ NPRTBL, NPRTBL }, /*066 F8*/
-// 	{ NPRTBL, NPRTBL }, /*067 F9*/
-// 	{ NPRTBL, NPRTBL }, /*068 F10*/
-// 	{ NPRTBL, NPRTBL }, /*069 NUM LOCK*/
-// 	{ NPRTBL, NPRTBL }, /*070 SCROLL LOCK*/
-// 	{ '7', '7' }, /*071 KEY 7*/
-// 	{ '8', '8' }, /*072 KEY 8*/
-// 	{ '9', '9' }, /*073 KEY 9*/
-// 	{ '-', '-' }, /*074 KEY -*/
-// 	{ '4', '4' }, /*075 KEY 4*/
-// 	{ '5', '5' }, /*076 KEY 5*/
-// 	{ '6', '6' }, /*077 KEY 6*/
-// 	{ '+', '+' }, /*078 KEY +*/
-// 	{ '1', '1' }, /*079 KEY 1*/
-// 	{ '2', '2' }, /*080 KEY 2*/
-// 	{ '3', '3' }, /*081 KEY 3*/
-// 	{ '0', '0' }, /*082 KEY 0*/
-// 	{ '.', '.' }, /*083 KEY .*/
-// 	{ NPRTBL, NPRTBL },/*084 SYS REQ (AT)*/
-// 	{ '+', '*' }, /*085*/
-// 	{ '+', '*' }, /*086*/
-// 	{ NPRTBL, NPRTBL },/*087 F11*/
-// 	{ NPRTBL, NPRTBL },/*088 F12*/
-// 	{ '+', '*' }, /*089*/
-// 	{ '+', '*' } /*090*/
-// };
-
-// // // Spanish keyboard: with the letters corresponding to shift
-// // // static unsigned int kbd_ES[][2] = { { NPRTBL, NPRTBL },/*000*/
-// // // 	{ NPRTBL, NPRTBL },/*001 ESCAPE*/
-// // // 	{ '1', '!' }, /*002*/
-// // // 	{ '2', '"' }, /*003*/
-// // // 	{ '3', '#' }, /*004*/
-// // // 	{ '4', '$' }, /*005*/
-// // // 	{ '5', '%' }, /*006*/
-// // // 	{ '6', '&' }, /*007*/
-// // // 	{ '7', '/' }, /*008*/
-// // // 	{ '8', '(' }, /*009*/
-// // // 	{ '9', ')' }, /*010*/
-// // // 	{ '0', '=' }, /*011*/
-// // // 	{ '\'', '?' }, /*012*/
-// // // 	{ '\n', '\n' }, /*013*/
-// // // 	{ '\b', '\b' }, /*014 BACKSPACE*/
-// // // 	{ '\t', '\t' }, /*015 TAB*/
-// // // 	{ 'q', 'Q' }, /*016*/
-// // // 	{ 'w', 'W' }, /*017*/
-// // // 	{ 'e', 'E' }, /*018*/
-// // // 	{ 'r', 'R' }, /*019*/
-// // // 	{ 't', 'T' }, /*020*/
-// // // 	{ 'y', 'Y' }, /*021*/
-// // // 	{ 'u', 'U' }, /*022*/
-// // // 	{ 'i', 'I' }, /*023*/
-// // // 	{ 'o', 'O' }, /*024*/
-// // // 	{ 'p', 'P' }, /*025*/
-// // // 	{ '\'', '\"' }, /*026*/
-// // // 	{ '+', '*' }, /*027*/
-// // // 	{ '\n', '\n' }, /*028*/
-// // // 	{ NPRTBL, NPRTBL },/*029 CTRL IZQ*/
-// // // 	{ 'a', 'A' }, /*030*/
-// // // 	{ 's', 'S' }, /*031*/
-// // // 	{ 'd', 'D' }, /*032*/
-// // // 	{ 'f', 'F' }, /*033*/
-// // // 	{ 'g', 'G' }, /*034*/
-// // // 	{ 'h', 'H' }, /*035*/
-// // // 	{ 'j', 'J' }, /*036*/
-// // // 	{ 'k', 'K' }, /*037*/
-// // // 	{ 'l', 'L' }, /*038*/
-// // // 	{ 164, 165 }, /*039*/
-// // // 	{ '{', '[' }, /*040*/
-// // // 	{ '}', ']' }, /*041*/
-// // // 	{ NPRTBL, NPRTBL },/*042 SHIFT IZQ*/
-// // // 	{ '<', '>' }, /*043*/
-// // // 	{ 'z', 'Z' }, /*044*/
-// // // 	{ 'x', 'X' }, /*045*/
-// // // 	{ 'c', 'C' }, /*046*/
-// // // 	{ 'v', 'V' }, 047
-// // // 	{ 'b', 'B' }, /*048*/
-// // // 	{ 'n', 'N' }, /*049*/
-// // // 	{ 'm', 'M' }, /*050*/
-// // // 	{ ',', ';' }, /*051*/
-// // // 	{ '.', ':' }, /*052*/
-// // // 	{ '-', '_' }, /*053*/
-// // // 	{ NPRTBL, NPRTBL },/*054 SHIFT DER*/
-// // // 	{ '*', '*' }, /*055 KEY **/
-// // // 	{ NPRTBL, NPRTBL },/*056 ALT IZQ*/
-// // // 	{ ' ', ' ' }, /*057 SPACE*/
-// // // 	{ NPRTBL, NPRTBL },/*058 CAPSLOCK*/
-// // // 	{ NPRTBL, NPRTBL },/*059 F1*/
-// // // 	{ NPRTBL, NPRTBL },/*060 F2*/
-// // // 	{ NPRTBL, NPRTBL },/*061 F3*/
-// // // 	{ NPRTBL, NPRTBL },/*062 F4*/
-// // // 	{ NPRTBL, NPRTBL },/*063 F5*/
-// // // 	{ NPRTBL, NPRTBL },/*064 F6*/
-// // // 	{ NPRTBL, NPRTBL },/*065 F7*/
-// // // 	{ NPRTBL, NPRTBL },/*066 F8*/
-// // // 	{ NPRTBL, NPRTBL },/*067 F9*/
-// // // 	{ NPRTBL, NPRTBL },/*068 F10*/
-// // // 	{ NPRTBL, NPRTBL },/*069 NUM LOCK*/
-// // // 	{ NPRTBL, NPRTBL },/*070 SCROLL LOCK*/
-// // // 	{ '7', '7' }, /*071 KEY 7*/
-// // // 	{ '8', '8' }, /*072 KEY 8*/
-// // // 	{ '9', '9' }, /*073 KEY 9*/
-// // // 	{ '-', '-' }, /*074 KEY -*/
-// // // 	{ '4', '4' }, /*075 KEY 4*/
-// // // 	{ '5', '5' }, /*076 KEY 5*/
-// // // 	{ '6', '6' }, /*077 KEY 6*/
-// // // 	{ '+', '+' }, /*078 KEY +*/
-// // // 	{ '1', '1' }, /*079 KEY 1*/
-// // // 	{ '2', '2' }, /*080 KEY 2*/
-// // // 	{ '3', '3' }, /*081 KEY 3*/
-// // // 	{ '0', '0' }, /*082 KEY 0*/
-// // // 	{ '.', '.' }, /*083 KEY .*/
-// // // 	{ NPRTBL, NPRTBL },/*084 SYS REQ (AT)*/
-// // // 	{ '+', '*' }, /*085*/
-// // // 	{ '+', '*' }, /*086*/
-// // // 	{ NPRTBL, NPRTBL },/*087 F11*/
-// // // 	{ NPRTBL, NPRTBL },/*088 F12*/
-// // // 	{ '+', '*' }, /*089*/
-// // // 	{ '+', '*' } /*090*/
-// // // };
-
-// // void
-// // sendToBuffer(char scancode)
-// // {
-// // 	// if(!k_buffer_is_full())
-// // 	// {
-// //  //    keyboard_buffer[kb_actual++] = scancode;
-// //  //    kb_cant++;
-
-// //  //    // to avoid buffer overflow, it starts again, writing over the stuff...
-// //  //    if(kb_actual == KB_SIZE){
-// //  //      kb_actual = 0;
-// //  //    }
-// // 	// }
-
-// // 	// set_key_state(scancode); //Actualiza los estados del shift
-// // 	// return;
-// // }
-
-
-// /* lee del buffer de teclado
-//  * devuelve el caracter o EOF
-// */
-// // int
-// // getKchar(void)
-// // {
-// // 	// unsigned char c;
-
-// // 	// if(!k_buffer_is_empty())
-// // 	// {
-// //  //    c = scancodeToChar(keyboard_buffer[kb_last++]);
-// //  //    kb_cant--;
-    
-// //  //    // to avoid buffer overflow, it starts again, writing over the stuff...
-// //  //    if(kb_last == KB_SIZE){
-// //  //      kb_last = 0;
-// //  //    }
-
-// //  //    return c;
-// // 	// }
-// // 	// return NPRTBL;
-// // }
-
-
-// static int
-// k_buffer_is_full(void)
-// {
-// 	return kb_cant == KB_SIZE ? 1 : 0;
-// }
-
-// int
-// k_buffer_is_empty(void)
-// {
-// 	return (kb_cant == 0) ? 1 : 0;
-// }
-
-// void
-// set_key_state(uint64_t scancode)
-// {
-// 	int position = (unsigned int) scancode;
-
-// 	switch(scancode){
-// 		case (SCANCODE_CHAR_RALT):
-// 			alt = !alt;
-// 			break;
-// 		case  (SCANCODE_CHAR_LALT):
-// 			alt = !alt;
-// 			break;
-// 		case (SCANCODE_CHAR_RSHIFT):
-// 			shift = !shift;
-// 			break;
-// 		case (SCANCODE_CHAR_LSHIFT):
-// 			shift = !shift;
-// 			break;
-// 		case (SCANCODE_CHAR_LCTRL):
-// 			ctrl = !ctrl;
-// 			break;
-// 		case (SCANCODE_CHAR_RCTRL):
-// 			ctrl = !ctrl;
-// 			break;
-// 		default:
-// 			return_character_position(position);
-// 			break;
-// 	}
-// 	return;
-// }
-
-// char
-// return_character_position(int position){
-// 	if (kbd_shifted())
-// 	{
-// 		char keyboard_symbol = kbd_EN[position][1];
-// 	} else if(kbd_capitalized()){
-// 		char keyboard_symbol = kbd_EN[position][1];
-// 	} else if(kbd_alted()){
-// 		char keyboard_symbol = kbd_EN[position][2];
-// 	}	else {
-// 		char keyboard_symbol = kbd_EN[position][0];
-// 	}
-// }*/*/
-void keyboard_handler(uint64_t scancode){
-	//set_key_state(scancode);
-
+KEYBOARD currentKeyboard;
+// English keyboard: with the letters corresponding to shift
+char kbd_EN[][4] = {
+	//USA
+	{ 0x00, NOCHAR, NOCHAR, NOCHAR }, //empty,
+	{ 0x01, NOCHAR, NOCHAR, NOCHAR }, //esc
+	{ 0x02, '1', '!', NOCHAR },
+	{ 0x03, '2', '@', NOCHAR },
+	{ 0x04, '3', '#', NOCHAR },
+	{ 0x05, '4', '$', NOCHAR },
+	{ 0x06, '5', '%', NOCHAR },
+	{ 0x07, '6', '^', NOCHAR },
+	{ 0x08, '7', '&', NOCHAR },
+	{ 0x09, '8', '*', NOCHAR },
+	{ 0x0A, '9', '(', NOCHAR },
+	{ 0x0B, '0', '"', NOCHAR },
+	{ 0x0C, '-', '_', NOCHAR },
+	{ 0x0D, '=', '+', NOCHAR },
+	{ 0x0E, '\b', '\b', '\b' }, //backspace
+	{ 0x0F, '\t', '\t', '\t' }, //tab
+	{ 0x10, 'q', 'Q', 'Q' },
+	{ 0x11, 'w', 'W', 'W' },
+	{ 0x12, 'e', 'E', 'E' },
+	{ 0x13, 'r', 'R', 'R' },
+	{ 0x14, 't', 'T', 'T' },
+	{ 0x15, 'y', 'Y', 'Y' },
+	{ 0x16, 'u', 'U', 'U' },
+	{ 0x17, 'i', 'I', 'I' },
+	{ 0x18, 'o', 'O', 'O' },
+	{ 0x19, 'p', 'P', 'P' },
+	{ 0x1a, '[', '{', NOCHAR },
+	{ 0x1b, ']', '}', NOCHAR },
+	{ 0x1c, '\n', '\n', '\n' },//enter
+	{ 0x1d, NOCHAR, NOCHAR, NOCHAR },//left ctrl
+	{ 0x1e, 'a', 'A', 'A' },
+	{ 0x1f, 's', 'S', 'S' },
+	{ 0x20, 'd', 'D', 'D' },
+	{ 0x21, 'f', 'F', 'F' },
+	{ 0x22, 'g', 'G', 'G' },
+	{ 0x23, 'h', 'H', 'H' },
+	{ 0x24, 'j', 'J', 'J' },
+	{ 0x25, 'k', 'K', 'K' },
+	{ 0x26, 'l', 'L', 'L' },
+	{ 0x27, ';', ':', NOCHAR },
+	{ 0x28, '\'', '"', NOCHAR },
+	{ 0x29, '`', '~', NOCHAR },
+	{ 0x2a, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE },//left shift
+	{ 0x2b, '\\', '|', NOCHAR },
+	{ 0x2c, 'z', 'Z', 'Z' },
+	{ 0x2d, 'x', 'X', 'X' },
+	{ 0x2e, 'c', 'C', 'C' },
+	{ 0x2f, 'v', 'V', 'V' },
+	{ 0x30, 'b', 'B', 'B' },
+	{ 0x31, 'n', 'N', 'N' },
+	{ 0x32, 'm', 'M', 'M' },
+	{ 0x33, ',', '<', NOCHAR },
+	{ 0x34, '.', '>', NOCHAR },
+	{ 0x35, '/', '?', NOCHAR },
+	{ 0x36, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE },//right shift
+	{ 0x37, '*', NOCHAR, NOCHAR  },//keypad *
+	{ 0x38, NOCHAR, NOCHAR, NOCHAR  },//left alt
+	{ 0x39, ' ', ' ', NOCHAR  },
+	{ 0x3a, NOCHAR, NOCHAR, NOCHAR  },//caps
+	{ 0x3b, NOCHAR, NOCHAR, NOCHAR  },//f1
+	{ 0x3c, NOCHAR, NOCHAR, NOCHAR  },//f2
+	{ 0x3d, NOCHAR, NOCHAR, NOCHAR  },//f3
+	{ 0x3e, NOCHAR, NOCHAR, NOCHAR  },//f4
+	{ 0x3f, NOCHAR, NOCHAR, NOCHAR  },//f5
+	{ 0x40, NOCHAR, NOCHAR, NOCHAR  },//f6
+	{ 0x41, NOCHAR, NOCHAR, NOCHAR  },//f7
+	{ 0x42, NOCHAR, NOCHAR, NOCHAR  },//f8
+	{ 0x43, NOCHAR, NOCHAR, NOCHAR  },//f9
+	{ 0x44, NOCHAR, NOCHAR, NOCHAR  },//f10
+	{ 0x45, NOCHAR, NOCHAR, NOCHAR  },//num
+	{ 0x46, NOCHAR, NOCHAR, NOCHAR  },//scroll
+	{ 0x47, '7', NOCHAR, NOCHAR  },//keypad 7
+	{ 0x48, '8', NOCHAR, NOCHAR  },//keypad 8
+	{ 0x49, '9', NOCHAR, NOCHAR  },//keypad 9
+	{ 0x4a, '-', NOCHAR, NOCHAR  },//keypad -
+	{ 0x4b, NOCHAR, NOCHAR, NOCHAR  },//keypad 4
+	{ 0x4c, '5', NOCHAR, NOCHAR  },//keypad 5
+	{ 0x4d, NOCHAR, NOCHAR, NOCHAR  },//keypad 6
+	{ 0x4e, '+', NOCHAR, NOCHAR  },//keypad +
+	{ 0x4f, '1', NOCHAR, NOCHAR  },//keypad 1
+	{ 0x50, '2', NOCHAR, NOCHAR  },//keypad 2
+	{ 0x51, '3', NOCHAR, NOCHAR  },//keypad 3
+	{ 0x52, '0', NOCHAR, NOCHAR  },//keypad 0
+	{ 0x53, '.', NOCHAR, NOCHAR  },//keypad 0
+	{ 0x57, NOCHAR, NOCHAR, NOCHAR },//f11
+	{ 0x58, NOCHAR, NOCHAR, NOCHAR }//f12
+};
+bool bufferIsEmpty(void) {
+	return currentKeyboard.enqueuePos == currentKeyboard.dequeuePos;
 }
 
-// int 
-// kbd_shifted(void)
-// {
-//     return shift;
-// }
+bool bufferIsFull(void) {
+	return currentKeyboard.enqueuePos == currentKeyboard.dequeuePos - 1;
+}
 
-// int
-// kbd_alted(void)
-// {
-// 	return alt;
-// }
+void initializeBuffer() {
+	int i;
+	currentKeyboard.enqueuePos = currentKeyboard.dequeuePos = 0;
 
-// int 
-// kbd_capitalized(void)
-// {
-//     return ((shift) && !capslock) || (!(shift) && capslock);
-// }
+	for (i = 0; i < BUFFER_SIZE; i++) {
+		currentKeyboard.buffer[i] = 0;
+	}
+	currentKeyboard.state.shifted = 0;
+	currentKeyboard.state.alted = 0;
+	currentKeyboard.state.capsLocked = 0;
+}
 
+bool sendToBuffer(char key) {
+	if (bufferIsFull() == true) {
+		return false;
+	}
+	currentKeyboard.buffer[currentKeyboard.enqueuePos] = (unsigned char)key;
+	currentKeyboard.enqueuePos = (currentKeyboard.enqueuePos + 1) % BUFFER_SIZE;
+	return true;
+}
+
+bool updateStates(char key) {
+	if (key == LEFT_SHIFT_MAKE || key == RIGHT_SHIFT_MAKE) {
+		currentKeyboard.state.shifted = 1;
+		return true;
+	}
+	else if (key == RIGHT_SHIFT_BREAK || key == LEFT_SHIFT_BREAK) {
+		currentKeyboard.state.shifted = 0;
+		return true;
+	}
+	else if (key == CAPS_LOCK) {
+		currentKeyboard.state.capsLocked = !currentKeyboard.state.capsLocked;
+		return true;
+	}
+	else if (key == CONTROL_R) {
+		currentKeyboard.state.alted = !currentKeyboard.state.alted;
+		return true;
+	}
+	return false;
+}
+
+int indexOfKey() {
+	if (currentKeyboard.state.shifted == 1) {
+		return SHIFTEDCOLUMN;
+	}
+	else if (currentKeyboard.state.capsLocked == 1) {
+		return CAPSLOCKEDCOLUMN;
+	}
+	else if (currentKeyboard.state.alted == 1) {
+		return ALTEDCOLUMN;
+	}
+	return NORMALCOLUMN;
+}
+
+void keyboard_handler(uint64_t scancode) {
+	int index= indexOfKey();
+	char key = kbd_EN[(int)scancode][index];
+	if (updateStates(key) == true) {
+		return;
+	}
+	else {
+		if(key!=NOCHAR){
+		//agrego al buffer
+		sendToBuffer(key);
+		//llamo a putc	
+		}
+		
+	}
+	return;
+}
 
 
 
