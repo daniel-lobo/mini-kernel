@@ -77,13 +77,13 @@ _pit_handler:                 ; INT 0x08 Handler (Timertick)
     pop rdi
     iretq
 
-_keyboard_handler:                  ; INT 0x09 Handler (Keyboard)
-    push rdi
-    push rax
-    xor eax, eax
-    in al, 0x60                ; Get the scancode from the keyboard
-    mov rdi, rax
-    call keyboard_handler
+; _keyboard_handler:                  ; INT 0x09 Handler (Keyboard)
+;     push rdi
+;     push rax
+;     xor eax, eax
+;     in al, 0x60                ; Get the scancode from the keyboard
+;     mov rdi, rax
+;     call keyboard_handler
 
 _keyboard_done:
     mov al, 0x20                ; Acknowledge the IRQ
