@@ -25,11 +25,19 @@ command_t commands[] = {
     { NULL, NULL }
 };
 
-void
+int
 main(void)
 {
+
     memset(&bss, 0, &endOfBinary - &bss);
-    sh_show_prompt();
+    char * v = (char*)0xB8000;
+    v[1] = 'x';
+    while (1)
+    {
+        
+    }
+    //sh_show_prompt();
+	return 0;
 }
 
 void
