@@ -1,4 +1,5 @@
 global _syscall
+global _hlt
 
 _syscall:
     push rbp
@@ -20,4 +21,8 @@ _syscall:
     pop rbx
     mov rsp, rbp
     pop rbp
+    ret
+
+_hlt:
+    hlt
     ret

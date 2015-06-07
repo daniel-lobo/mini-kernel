@@ -7,17 +7,16 @@
 
 void write_handler(int fd, char * s, int len)
 {
-	video_write_string(s);
+	video_write_char(s[0]);
 }
 
 uint32_t read_handler(int fd, char * s, int len)
 {
-	if (bufferIsEmpty()){
-		return 0;
+	if (!(peek() - s[0]))
+	{
+		return 1;
 	}
-	s = get_buffer();
-	clean_buffer();
-	return 1;
+	return 0;
 }
 
 uint32_t rtc_handler()

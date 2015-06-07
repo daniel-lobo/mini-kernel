@@ -2,6 +2,7 @@ global _enable_pic
 global _set_handlers
 global _outb
 global _inb
+global _hlt
 
 extern pit_handler
 extern keyboard_handler
@@ -216,3 +217,7 @@ sys_keyboard:                  ; INT 0x09 Handler (Keyboard)
     pop rax
     pop rdi
     iretq
+
+_hlt:
+    hlt
+    ret

@@ -63,11 +63,11 @@ int main()
 	_set_handlers();
 	_enable_pic();
 
-	initializeBuffer();
+	
 	/* Inicializar driver de video */
 	video_init();	 
 	video_init_screensaver();
-
+	initializeBuffer();
 	((EntryPoint)shell_module_address)();
 	//video_set_screensaver();
 	//_syscall(0, 0, "hola", 4);

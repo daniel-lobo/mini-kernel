@@ -36,7 +36,7 @@ getc(FILE *stream)
     }
     while (!read(stream->fd, (void *)&ch, 1))
     {
-
+        _hlt();
     }
     return (int)ch;
 }

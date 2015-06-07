@@ -99,7 +99,7 @@ bool bufferIsEmpty(void) {
 }
 
 bool bufferIsFull(void) {
-	return currentKeyboard.enqueuePos == currentKeyboard.dequeuePos - 1;
+	return currentKeyboard.enqueuePos == BUFFER_SIZE;
 }
 
 void initializeBuffer() {
@@ -118,8 +118,8 @@ bool sendToBuffer(char key) {
 	if (bufferIsFull() == true) {
 		return false;
 	}
-	currentKeyboard.buffer[currentKeyboard.enqueuePos] = (unsigned char)key;
-	currentKeyboard.enqueuePos = (currentKeyboard.enqueuePos + 1) % BUFFER_SIZE;
+	currentKeyboard.buffer[currentKeyboard.enqueuePos + 1] = (unsigned char)key;
+	currentKeyboard.enqueuePos++;
 	return true;
 }
 
@@ -128,13 +128,14 @@ bool updateStates(char key) {
 		currentKeyboard.state.shifted = 1;
 		return true;
 	}
+	else if (key == RIGHT_SHIFT_BREAK || key == LEFT_SHIFT_BREAK) {
+		currentKeyboard.state.shifted = 0;
+		return true;
+	}
 	else if (key == CAPS_LOCK) {
 		currentKeyboard.state.capsLocked = !currentKeyboard.state.capsLocked;
 		return true;
 	}
-	else if (key == RIGHT_SHIFT_BREAK || key == LEFT_SHIFT_BREAK) {
-		currentKeyboard.state.shifted = 0;
-		}
 	else if (key == CONTROL_R) {
 		currentKeyboard.state.alted = !currentKeyboard.state.alted;
 		return true;
@@ -157,11 +158,7 @@ int indexOfKey() {
 
 void keyboard_handler(uint64_t scancode) {
 	int index= indexOfKey();
-
 	char key = kbd_EN[(int)scancode][index];
-	if(scancode & 0x80){
-		return;
-	}
 	if (updateStates(key) == true) {
 		return;
 	}
@@ -170,7 +167,7 @@ void keyboard_handler(uint64_t scancode) {
 		//agrego al buffer
 		sendToBuffer(key);
 		// testeo handler
-		video_write_char(key);
+		//video_write_char(key);
 		}
 		
 	}
@@ -178,13 +175,23 @@ void keyboard_handler(uint64_t scancode) {
 	return;
 }
 
-char * get_buffer()
+unsigned char peek()
 {
-	return (char *) currentKeyboard.buffer;
+	unsigned char c = -1;
+	int i;
+	if (!bufferIsEmpty()){
+		c = currentKeyboard.buffer[currentKeyboard.dequeuePos];
+
+		for (i = 0; i < currentKeyboard.enqueuePos - 1; i++)
+		{
+			currentKeyboard.buffer[i] = currentKeyboard.buffer[i + 1];
+		}
+		currentKeyboard.enqueuePos++;
+	}
+	return c;
 }
 
 void clean_buffer()
 {
 	currentKeyboard.enqueuePos = 0;
-	currentKeyboard.dequeuePos = 0;
 }
