@@ -1,6 +1,6 @@
 include Makefile.inc
 
-all: syscallModule libcModule shellModule
+all: syscallModule libcModule shellModule sampleDataModule
 
 shellModule:
 	cd shellModule; make
@@ -10,6 +10,9 @@ libcModule:
 
 syscallModule:
 	cd syscallModule; make
+
+sampleDataModule:
+	printf "This is sample data." >> SampleDataModule.bin && dd if=/dev/zero bs=1 count=1 >> SampleDataModule.bin
 
 clean:
 	cd shellModule; make clean

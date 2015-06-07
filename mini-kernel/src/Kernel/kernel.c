@@ -20,6 +20,7 @@ extern uint8_t endOfKernel;
 static const uint64_t PageSize = 0x1000;
 
 static void * const shell_module_address = (void*)0x400000;
+static void * const data_module_address = (void*)0x500000;
 
 IDTR idtr; /* IDTR description*/
 
@@ -44,7 +45,8 @@ void * initializeKernelBinary()
 
 	/* Load modules */
 	void * moduleAddresses[] = {
-		shell_module_address
+		shell_module_address,
+		data_module_address
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -58,15 +60,16 @@ void * initializeKernelBinary()
 int main()
 {
 	/* IDT & handlers setup */
-	_set_handlers();
-	_enable_pic();
+	//_set_handlers();
+	//_enable_pic();
 
 	/* Inicializar driver de video */
-	video_init();
+	/*video_init();
+	video_write_string("hola mundo");
+	 
+	video_init_screensaver();*/
 
-	/* Set screensaver up */
-	video_init_screensaver();
-
+	((EntryPoint)shell_module_address)();
 	//video_set_screensaver();
 	//_syscall(0, 0, "hola", 4);
 	//syscall_handler(0,1,2,3,4,5);
