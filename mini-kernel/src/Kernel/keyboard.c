@@ -94,6 +94,11 @@ char kbd_EN[][4] = {
 	{ 0x57, NOCHAR, NOCHAR, NOCHAR },//f11
 	{ 0x58, NOCHAR, NOCHAR, NOCHAR }//f12
 };
+void clearBuffer() {
+	for (i = 0; i < BUFFER_SIZE; i++) {
+		currentKeyboard.buffer[i] = 0;
+	}
+}
 bool bufferIsEmpty(void) {
 	return currentKeyboard.enqueuePos == currentKeyboard.dequeuePos;
 }
