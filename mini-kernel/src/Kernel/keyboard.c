@@ -176,7 +176,9 @@ void keyboard_handler(uint64_t scancode) {
 	}
 	else {
 		if(key != NOCHAR){
-			sendToBuffer(key);
+			if (!is_ss_on()){
+				sendToBuffer(key);
+			}
 			if (key == '\n'){
 				if (stroke_counter > 0){					
 					video_write_char(key);

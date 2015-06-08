@@ -14,6 +14,7 @@ extern rtc_set_handler
 extern ss_test_handler
 extern ss_set_handler
 extern format_set_handler
+extern ss_status_handler
 
 _outb:
     push    rbp
@@ -84,7 +85,7 @@ sys_soft:                                 ; Interrupciones de software, int 80h
     cmp rdi, 6
     jz sys_set_color
     cmp rdi, 7
-    jz hang
+    jz sys_is_ss_on
     push rax
     mov al, 0x20
     out 0x20, al
@@ -218,6 +219,15 @@ sys_keyboard:                  ; INT 0x09 Handler (Keyboard)
     pop rdi
     iretq
 
-_hlt:
-    hlt
-    jmp _hlt
+sys_is_ss_on:
+     mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call ss_status_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq

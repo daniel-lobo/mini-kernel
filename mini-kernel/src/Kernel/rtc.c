@@ -43,3 +43,10 @@ rtc_set_time(int time)
     _outb(hour, CMOS_DATA);
     return 0;
 }
+
+void
+rtc_startup_fix()
+{
+    int tim = rtc_time();
+    rtc_set_time(tim - 3*10000);
+}

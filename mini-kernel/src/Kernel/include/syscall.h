@@ -11,6 +11,7 @@ void rtc_set_handler(uint32_t t);
 void ss_test_handler();
 void ss_set_handler();
 void format_set_handler();
+int ss_status_handler();
 
 #endif
 

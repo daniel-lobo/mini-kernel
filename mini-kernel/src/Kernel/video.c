@@ -215,10 +215,11 @@ void
 video_init_screensaver()
 {
 	char * ss = "This is a screensaver. Press any key to leave.";
-	int i;
-	for (i = 0; ss[i] != '\0'; i++)
+	int i, j = 16 + SCREEN_WIDTH * 13;
+
+	for (i = j; ss[i - j] != '\0'; i++)
 	{
-		screens[0].content[i] = ss[i];
+		screens[0].content[i] = ss[i - j];
 		screens[0].format[i] = 0x04;
 	}
 }
@@ -286,5 +287,5 @@ ss_reset_clock()
 void
 set_ss_timer(uint64_t t)
 {
-	scrensaver_timer = aux = t/1.42857;
+	scrensaver_timer = aux = t*1.42857;
 }

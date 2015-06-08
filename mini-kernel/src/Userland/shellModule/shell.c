@@ -39,7 +39,7 @@ sh_show_prompt()
 {
     display_prompt();
     char buf[MAX_ARGS];
-    
+
     while (1)
     {
         gets(buf, sizeof(buf));
@@ -47,6 +47,7 @@ sh_show_prompt()
 
         if (strlen(buf) > 0)
         {
+            sc_set_format(LIGHT_GREY);
             sh_do_command(buf);
             display_prompt();
         }
@@ -56,10 +57,13 @@ sh_show_prompt()
 void
 display_prompt()
 {
-    sc_set_format(RED);
-    printf("%s", PROMPT);
-    sc_set_format(WHITE);
-    printf(">", PROMPT);  
+    if (!sc_screensaver_status())
+    {
+      sc_set_format(RED);
+    printf("%s>", PROMPT);
+    sc_set_format(WHITE);       
+    }
+
 }
 
 int

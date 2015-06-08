@@ -48,3 +48,8 @@ void format_set_handler(COLOR color)
 {
 	set_format(color, BLACK);
 }
+
+int ss_status_handler()
+{
+	return is_ss_on();
+}

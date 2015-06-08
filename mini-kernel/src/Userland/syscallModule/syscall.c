@@ -43,3 +43,9 @@ sc_set_format(int color)
 {
 	_syscall((uint64_t) SYSCALL_SET_COLOR, color);
 }
+
+int
+sc_screensaver_status()
+{
+	return _syscall((uint64_t) SYSCALL_IS_SS_ON);
+}

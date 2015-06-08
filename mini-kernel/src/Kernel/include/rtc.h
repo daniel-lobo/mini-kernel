@@ -6,5 +6,6 @@ int get_update_in_progress_flag(void);
 
 int rtc_time(void);
 int rtc_set_time(int time);
+void rtc_startup_fix();
 
 #endif

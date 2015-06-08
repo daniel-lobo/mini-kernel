@@ -71,6 +71,9 @@ int main()
 	/* buffer de teclado*/
 	initializeBuffer();
 	
+	/* fix de uso horario */
+	rtc_startup_fix();
+
 	((EntryPoint)shell_module_address)();
 	//video_set_screensaver();
 	//_syscall(0, 0, "hola", 4);
