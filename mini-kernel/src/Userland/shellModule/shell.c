@@ -7,7 +7,7 @@
 #include "../syscallModule/include/syscall.h"
 #include "./include/color.h"
 
-#define MAX_ARGS 1024
+#define MAX_ARGS 256
 #define MAX_ARGC 256
 
 #define PROMPT "root@ArquiOS"
@@ -49,9 +49,16 @@ sh_show_prompt()
         {
             sc_set_format(LIGHT_GREY);
             sh_do_command(buf);
+            sh_clean_buffer(buf);
             display_prompt();
         }
     }
+}
+
+void
+sh_clean_buffer(char * buf){
+    memset(buf, 0, MAX_ARGS);
+
 }
 
 void
