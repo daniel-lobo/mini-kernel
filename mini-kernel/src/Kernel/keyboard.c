@@ -173,7 +173,7 @@ void keyboard_handler(uint64_t scancode) {
 		//agrego al buffer
 		sendToBuffer(key);
 		// testeo handler
-		//video_write_char(key);
+		video_write_char(key);
 		}
 		
 	}

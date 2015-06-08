@@ -44,7 +44,7 @@ sh_show_prompt()
         sc_set_format(RED);
         printf("%s", PROMPT);
         sc_set_format(WHITE);
-        printf(">");
+        printf(">", PROMPT);
 
         gets(buf, sizeof(buf));
         trim(buf);

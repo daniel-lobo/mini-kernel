@@ -19,7 +19,6 @@ uint32_t read_handler(int fd, char * s, int len)
 {
 	if (!bufferIsEmpty())
 	{
-		//video_write_char(peek());
 		return peek();
 	}
 	return 0;

@@ -220,4 +220,4 @@ sys_keyboard:                  ; INT 0x09 Handler (Keyboard)
 
 _hlt:
     hlt
-    ret
+    jmp _hlt
