@@ -5,16 +5,22 @@
 #include "./include/keyboard.h"
 #include <stdint.h>
 
-void write_handler(int fd, char * s, int len)
+uint32_t write_handler(int fd, char * s, int len)
 {
+	if (s[0] == '\0')
+	{
+		return -1;
+	}
 	video_write_char(s[0]);
+	return s[0];
 }
 
 uint32_t read_handler(int fd, char * s, int len)
 {
-	if (!(peek() - s[0]))
+	if (!bufferIsEmpty())
 	{
-		return 1;
+		video_write_char(peek());
+		return peek();
 	}
 	return 0;
 }

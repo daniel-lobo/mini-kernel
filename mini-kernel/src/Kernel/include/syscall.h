@@ -4,7 +4,7 @@
 
 void pit_handler();
 void keyboard_handler();
-void write_handler();
+uint32_t write_handler();
 uint32_t read_handler();
 uint32_t rtc_handler();
 void rtc_set_handler(uint32_t t);

@@ -10,8 +10,8 @@
 #define SYSCALL_SET_COLOR 6
 #define SYSCALL_ERROR  -1
 
-extern uint64_t _syscall(uint64_t callid, ...);
-extern void _hlt();
+uint64_t _syscall(uint64_t callid, ...);
+void _hlt();
 
 int sc_write(int fd, char* s, int len);
 int sc_read(int fd, char* s, int len);
