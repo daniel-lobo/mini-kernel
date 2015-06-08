@@ -116,7 +116,9 @@ void initializeBuffer() {
 
 bool sendToBuffer(char key) {
 	if (bufferIsFull() == true) {
-		return false;
+		currentKeyboard.buffer[0] = (unsigned char)key;
+		currentKeyboard.enqueuePos = 0;
+		return true;
 	}
 	currentKeyboard.buffer[currentKeyboard.enqueuePos + 1] = (unsigned char)key;
 	currentKeyboard.enqueuePos++;
