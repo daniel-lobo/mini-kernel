@@ -5,6 +5,8 @@
 
 KEYBOARD currentKeyboard;
 // English keyboard: with the letters corresponding to shift
+int stroke_counter = 0;
+
 char kbd_EN[][4] = {
 	//USA
 	{ 0x00, NOCHAR, NOCHAR, NOCHAR }, //empty,
@@ -169,31 +171,55 @@ void keyboard_handler(uint64_t scancode) {
 		return;
 	}
 	else {
-		if(key!=NOCHAR){
-		//agrego al buffer
-		sendToBuffer(key);
-		// testeo handler
-		video_write_char(key);
-		}
-		
+		if(key != NOCHAR){
+			sendToBuffer(key);
+			if (key == '\n'){
+				if (stroke_counter > 0){					
+					video_write_char(key);
+				}
+				stroke_counter = 0;
+			}else if (key == '\b'){
+				stroke_counter--;
+				if (stroke_counter >= 0){					
+					video_write_char(key);
+				} 
+			}else{
+				stroke_counter++;
+				video_write_char(key);
+			}
+		}	
 	}
 	video_refresh();
 	return;
 }
 
-unsigned char peek()
+unsigned char
+pop()
 {
 	unsigned char c = -1;
 	int i;
-	if (!bufferIsEmpty()){
+	if (!bufferIsEmpty())
+	{
 		c = currentKeyboard.buffer[currentKeyboard.dequeuePos];
 		currentKeyboard.dequeuePos = (currentKeyboard.dequeuePos+1) % BUFFER_SIZE;
 	}
 	return c;
-
 }
 
-void clean_buffer()
+void
+delete_from_buffer()
+{
+	if (!bufferIsEmpty())
+	{
+		int i = currentKeyboard.dequeuePos;
+		for (i = 0; i < BUFFER_SIZE - 1; i++){
+			currentKeyboard.buffer[i] = currentKeyboard.buffer[i + 1];
+		}
+	}
+}
+
+void
+clean_buffer()
 {
 	currentKeyboard.enqueuePos = 0;
 	currentKeyboard.dequeuePos = 0;

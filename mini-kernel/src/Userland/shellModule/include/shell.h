@@ -5,6 +5,7 @@ void sh_init(void);
 void sh_show_prompt(void);
 int sh_do_command(char buf[]);
 void sh_tokenize(char buf[], int *argc, char *argv[]);
+void display_prompt();
 
 int execute(int argc, char **argv);
 

@@ -24,5 +24,5 @@ int     memcmp(const void *dest, const void *src, uint64_t n);
 void   *memset(void *s, int c, uint64_t n);
 
 void    trim(char *str);
-
+int		deleted(char *str);
 #endif

@@ -46,6 +46,7 @@ strlen(const char *s)
     uint64_t i = 0;
     while (*s++ != '\0')
     {
+
         i++;
     }
     return i;
@@ -189,4 +190,19 @@ trim(char *str)
         str[j++] = str[i++];
     }
     str[j] = '\0';
+}
+
+int
+deleted(char *str)
+{
+    int i = 0, j = 0;
+    while (str[i] != '\0'){
+        if (str[i] == '\b'){
+            j++;
+        }
+        i++;
+    }
+    if (i - (j * 2) > 0)
+        return 0;
+    return 1;
 }

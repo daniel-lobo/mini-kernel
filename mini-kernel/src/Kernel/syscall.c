@@ -19,7 +19,7 @@ uint32_t read_handler(int fd, char * s, int len)
 {
 	if (!bufferIsEmpty())
 	{
-		return peek();
+		return pop();
 	}
 	return 0;
 }

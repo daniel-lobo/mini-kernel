@@ -89,17 +89,26 @@ gets(char *s, int size)
 char *
 fgets(char *s, int size, FILE *stream)
 {
-    char c = getc(stream);
+    char c;
     int i = 0; 
+    int stop = 0;
 
-    while (i + 1 < size && c != '\n' && c != EOF)
+    while (i < size && !stop)
     {
-        s[i++] = c;;
         c = getc(stream);
+        if (c != '\n' && c != EOF)
+        {
+            if (c == '\b'){
+                i = (i - 1 < 0)? 0: i-1;
+            }else{
+                s[i++] = c;
+            }    
+        }else{
+            stop = 1;
+        }
     }
-
     s[i] = 0;
-    return (i != 0) ? s : NULL;
+    return (i != 0 && !strcmp(s, "")) ? s : NULL;
 }
 
 int

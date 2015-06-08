@@ -37,23 +37,29 @@ main(void)
 void
 sh_show_prompt()
 {
+    display_prompt();
     char buf[MAX_ARGS];
-
+    
     while (1)
     {
-        sc_set_format(RED);
-        printf("%s", PROMPT);
-        sc_set_format(WHITE);
-        printf(">", PROMPT);
-
         gets(buf, sizeof(buf));
         trim(buf);
 
         if (strlen(buf) > 0)
         {
             sh_do_command(buf);
+            display_prompt();
         }
     }
+}
+
+void
+display_prompt()
+{
+    sc_set_format(RED);
+    printf("%s", PROMPT);
+    sc_set_format(WHITE);
+    printf(">", PROMPT);  
 }
 
 int
