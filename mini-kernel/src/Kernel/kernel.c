@@ -67,7 +67,10 @@ int main()
 	/* Inicializar driver de video */
 	video_init();	 
 	video_init_screensaver();
+
+	/* buffer de teclado*/
 	initializeBuffer();
+	
 	((EntryPoint)shell_module_address)();
 	//video_set_screensaver();
 	//_syscall(0, 0, "hola", 4);
