@@ -38,6 +38,7 @@ int get_cur_position();
 void video_init_screensaver();
 void video_set_screensaver();
 void video_set_terminal();
+void video_save_screen();
 
 void ss_clock();
 void ss_reset_clock();

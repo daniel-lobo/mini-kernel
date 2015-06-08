@@ -42,7 +42,7 @@ exec_set_rtc(int argc, char **argv)
     args_shift(1, &argc, &argv);
 
     if (argc != 3){
-        printf("Incorrect clock format: srtc $H $M $S\n");
+        printf("Incorrect clock format: srtc H M $S\n");
     }
 
     int hour = atoi(*argv++);
@@ -57,7 +57,7 @@ exec_set_rtc(int argc, char **argv)
 int
 exec_print_rtc(int argc, char **argv)
 {
-    unsigned long int rtc = sc_rtc_get();
+    int rtc = sc_rtc_get();
 
     int hour = rtc / 10000;
     int min = (rtc / 100) % 100;

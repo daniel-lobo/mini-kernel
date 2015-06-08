@@ -21,11 +21,23 @@ get_update_in_progress_flag(void)
 int
 rtc_time(void)
 {
-    int sec = (int) read_cmos_register(0x00);
-    int min = (int) read_cmos_register(0x02);
+    while (get_update_in_progress_flag());
+
+    int second = (int) read_cmos_register(0x00);
+    int minute = (int) read_cmos_register(0x02);
     int hour = (int) read_cmos_register(0x04);
 
-    return sec + min * 100 + hour * 10000;
+    int registerB = read_cmos_register(0x0B);
+ 
+    // Convert BCD to binary values if necessary
+ 
+    if (!(registerB & 0x04)) {
+        second = (second & 0x0F) + ((second / 16) * 10);
+        minute = (minute & 0x0F) + ((minute / 16) * 10);
+        hour = ( (hour & 0x0F) + (((hour & 0x70) / 16) * 10) ) | (hour & 0x80);
+    }
+
+    return second + minute * 100 + hour * 10000;
 }
 
 int

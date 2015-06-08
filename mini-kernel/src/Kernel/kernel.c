@@ -5,6 +5,7 @@
 #include "./include/keyboard.h"
 #include "./include/syscall.h"
 #include "./include/video.h"
+#include "./include/rtc.h"
 
 #include "./include/libc.h"
 

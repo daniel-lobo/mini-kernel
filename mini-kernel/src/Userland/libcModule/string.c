@@ -191,18 +191,3 @@ trim(char *str)
     }
     str[j] = '\0';
 }
-
-int
-deleted(char *str)
-{
-    int i = 0, j = 0;
-    while (str[i] != '\0'){
-        if (str[i] == '\b'){
-            j++;
-        }
-        i++;
-    }
-    if (i - (j * 2) > 0)
-        return 0;
-    return 1;
-}
