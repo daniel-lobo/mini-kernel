@@ -65,7 +65,7 @@ char kbd_EN[][4] = {
 	{ 0x37, '*', NOCHAR, NOCHAR  },//keypad *
 	{ 0x38, NOCHAR, NOCHAR, NOCHAR  },//left alt
 	{ 0x39, ' ', ' ', NOCHAR  },
-	{ 0x3a, NOCHAR, NOCHAR, NOCHAR  },//caps
+	{ 0x3a, CAPS_LOCK, CAPS_LOCK, CAPS_LOCK  },//caps
 	{ 0x3b, NOCHAR, NOCHAR, NOCHAR  },//f1
 	{ 0x3c, NOCHAR, NOCHAR, NOCHAR  },//f2
 	{ 0x3d, NOCHAR, NOCHAR, NOCHAR  },//f3
@@ -128,15 +128,15 @@ bool sendToBuffer(char key) {
 
 bool updateStates(char key) {
 	if (key == LEFT_SHIFT_MAKE || key == RIGHT_SHIFT_MAKE) {
-		currentKeyboard.state.shifted = 1;
-		return true;
-	}
-	else if (key == RIGHT_SHIFT_BREAK || key == LEFT_SHIFT_BREAK) {
-		currentKeyboard.state.shifted = 0;
+		currentKeyboard.state.shifted = !currentKeyboard.state.shifted;
 		return true;
 	}
 	else if (key == CAPS_LOCK) {
-		currentKeyboard.state.capsLocked = !currentKeyboard.state.capsLocked;
+		if (currentKeyboard.state.capsLocked ==0){
+			currentKeyboard.state.capsLocked =1;
+		} else {
+			currentKeyboard.state.capsLocked =0;
+		}
 		return true;
 	}
 	else if (key == CONTROL_R) {
@@ -162,7 +162,11 @@ int indexOfKey() {
 void keyboard_handler(uint64_t scancode) {
 	int index= indexOfKey();
 	char key = kbd_EN[(int)scancode][index];
+
 	if(scancode & 0x80){
+		if(scancode == LEFT_SHIFT_BREAK || scancode == RIGHT_SHIFT_BREAK) {
+			currentKeyboard.state.shifted = 0;	
+		}
 		return;	
 	}
 	if (updateStates(key) == true) {

@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#define LEFT_SHIFT_MAKE   (char)257
-#define RIGHT_SHIFT_MAKE    (char)258
-#define CAPS_LOCK           (char)259
+#define LEFT_SHIFT_MAKE   (char)0x2A
+#define RIGHT_SHIFT_MAKE    (char)0x36
+#define CAPS_LOCK           (char)0x3A
 #define LEFT_SHIFT_BREAK    (char)0xAA
 #define RIGHT_SHIFT_BREAK   (char)0xB6
 #define CONTROL_MAKE        260
