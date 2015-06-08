@@ -116,11 +116,12 @@ void initializeBuffer() {
 
 bool sendToBuffer(char key) {
 	if (bufferIsFull() == true) {
-		currentKeyboard.buffer[0] = (unsigned char)key;
 		currentKeyboard.enqueuePos = 0;
+		currentKeyboard.buffer[0] = (unsigned char)key;
+		currentKeyboard.enqueuePos++;
 		return true;
 	}
-	currentKeyboard.buffer[currentKeyboard.enqueuePos + 1] = (unsigned char)key;
+	currentKeyboard.buffer[currentKeyboard.enqueuePos] = (unsigned char)key;
 	currentKeyboard.enqueuePos++;
 	return true;
 }
@@ -161,6 +162,9 @@ int indexOfKey() {
 void keyboard_handler(uint64_t scancode) {
 	int index= indexOfKey();
 	char key = kbd_EN[(int)scancode][index];
+	if(scancode & 0x80){
+		return;	
+	}
 	if (updateStates(key) == true) {
 		return;
 	}
@@ -183,17 +187,14 @@ unsigned char peek()
 	int i;
 	if (!bufferIsEmpty()){
 		c = currentKeyboard.buffer[currentKeyboard.dequeuePos];
-
-		for (i = 0; i < currentKeyboard.enqueuePos - 1; i++)
-		{
-			currentKeyboard.buffer[i] = currentKeyboard.buffer[i + 1];
-		}
-		currentKeyboard.enqueuePos++;
+		currentKeyboard.dequeuePos = (currentKeyboard.dequeuePos+1) % BUFFER_SIZE;
 	}
 	return c;
+
 }
 
 void clean_buffer()
 {
 	currentKeyboard.enqueuePos = 0;
+	currentKeyboard.dequeuePos = 0;
 }
