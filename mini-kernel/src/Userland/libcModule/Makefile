@@ -6,6 +6,7 @@ all: libc
 
 libc:
 	$(GCC) $(GCCFLAGS) $(HEADERS) $(LIBRARIES) -lsyscall -c *.c
+	mkdir -p ./lib
 	$(AR) rcs lib/liblibc.a *.o
 
 clean:

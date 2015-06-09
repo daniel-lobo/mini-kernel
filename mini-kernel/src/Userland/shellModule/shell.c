@@ -77,7 +77,7 @@ sh_do_command(char buf[])
 {
     int argc = 0;
     char *argv[MAX_ARGC];
-    sh_tokenize(buf, &argc, argv);
+    sh_parse_args(buf, &argc, argv);
 
     return execute(argc, argv);
 }
@@ -96,12 +96,12 @@ execute(int argc, char **argv)
         i++;
     }
 
-    printf("%s: Not a valid command\n", argv[0]);
+    printf("%s: Invalid command\n", argv[0]);
     return 1;
 }
 
 void
-sh_tokenize(char buf[], int *argc, char *argv[])
+sh_parse_args(char buf[], int *argc, char *argv[])
 {
     char ch;
     enum state { SPACE, TOKEN, QUOTED_START, QUOTED } state = SPACE;

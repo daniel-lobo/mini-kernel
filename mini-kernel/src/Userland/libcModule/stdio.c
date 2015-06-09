@@ -8,17 +8,13 @@
 
 FILE _stdin = { STDIN_FILENO };
 FILE _stdout = { STDOUT_FILENO };
-FILE _stderr = { STDERR_FILENO };
 
 FILE *stdin = &_stdin;
 FILE *stdout = &_stdout;
-FILE *stderr = &_stderr;
 
 int
 putc(int ch, FILE *stream)
 {
-    /* TODO: This should block while it cannot write, but there isn't anyone to
-     * unblock it, so we leave it as is */
     if (write(stream->fd, (void *)&ch, 1) == -1)
         return EOF;
     return ch;
@@ -35,12 +31,6 @@ getc(FILE *stream)
     return (int)ch;
 }
 
-void
-ungetc(int ch, FILE *stream)
-{
-    stream->lastc = ch;
-}
-
 int
 puts(const char *str)
 {
@@ -55,7 +45,6 @@ puts(const char *str)
     res = putchar('\n');
     if (res == -1)
         return EOF;
-    /* Return a non-negative number on success. */
     return 0;
 }
 
@@ -97,7 +86,10 @@ fgets(char *s, int size, FILE *stream)
         c = getc(stream);
     }
     s[i] = 0;
-    putchar('\n');
+    if (i > 0)
+    {
+        putchar('\n');
+    }
     return (i != 0) ? s : NULL;
 }
 
@@ -109,19 +101,6 @@ printf(const char *fmt, ...)
 
     va_start(ap, fmt);
     return vfprintf(stdout, fmt, ap);
-    va_end(ap);
-
-    return retval;
-}
-
-int
-sprintf(char *s, const char *fmt, ...)
-{
-    va_list ap;
-    int retval;
-
-    va_start(ap, fmt);
-    retval = vsprintf(s, fmt, ap);
     va_end(ap);
 
     return retval;
@@ -185,13 +164,6 @@ printf_X(unsigned int i, FILE *f)
 }
 
 int
-vsprintf(char *str, const char *fmt, va_list ap)
-{
-    /* TODO: Code */
-    return 0;
-}
-
-int
 vfprintf(FILE *f, const char *fmt, va_list ap)
 {
     int i = 0;
@@ -239,144 +211,6 @@ vfprintf(FILE *f, const char *fmt, va_list ap)
         i++;
     }
     return acum;
-}
-
-int
-scanf(const char *fmt, ...)
-{
-    va_list ap;
-    int retval;
-
-    va_start(ap, fmt);
-    retval = vscanf(fmt, ap);
-    va_end(ap);
-
-    return retval;
-}
-
-int
-fscanf(FILE *f, const char *fmt, ...)
-{
-    va_list ap;
-    int retval;
-
-    va_start(ap, fmt);
-    retval = vfscanf(f, fmt, ap);
-    va_end(ap);
-
-    return retval;
-}
-
-int
-sscanf(char *str, const char *fmt, ...) {
-    va_list ap;
-    int retval;
-
-    va_start(ap, fmt);
-    retval = vsscanf(str, fmt, ap);
-    va_end(ap);
-
-    return retval;
-}
-
-int
-vscanf(const char *fmt, va_list ap)
-{
-    /* TODO: current implementation is not fully tested and may contain some
-     * bugs. */
-    int ch = 0;
-    void *ptr;
-    int matches = 0;
-    bool negative = false;
-    while ((ch = getchar()) != '\n')
-    {
-        if (*fmt == '%')
-        {
-            fmt++;
-            switch (*fmt)
-            {
-            case 'd':
-                ptr = va_arg(ap, int *);
-                if (ch == '-')
-                {
-                    ch = getchar();
-                    negative = true;
-                }
-                if (isdigit(ch))
-                {
-                    matches++;
-                    *(int *)ptr = ch - '0';
-                }
-                else
-                {
-                    /* ERROR: String is not number */
-                    return matches;
-                }
-                while (isdigit(ch = getchar()))
-                {
-                    *(int *)ptr *= 10;
-                    *(int *)ptr += ch - '0';
-                }
-                if (negative)
-                {
-                    *(int *)ptr = -(*(int *)ptr);
-                    negative = false;
-                }
-                ungetc(ch, stdin);
-                break;
-            case 's':
-                ptr = va_arg(ap, char *);
-                if (!isspace(ch))
-                {
-                    matches++;
-                    *(char *)ptr++ = ch;
-                }
-                while (!isspace(ch = getchar()))
-                {
-                    *(char *)ptr++ = ch;
-                }
-                *(char *)ptr = '\0';
-                ungetc(ch, stdin);
-                break;
-            case '%':
-                /* Matching error */
-                if (ch == '%')
-                    matches++;
-                else
-                    return matches;
-                break;
-            case 'c':
-                ptr = va_arg(ap, char *);
-                *(char *)ptr = ch;
-                matches++;
-                break;
-            default:
-                /* Error: invalid format specifier */
-                return -1;
-            }
-        }
-        else if (ch != *fmt)
-        {
-            /* Error: stream does not match format */
-            return matches;
-        }
-        fmt++;
-    }
-    return matches;
-}
-
-int
-vfscanf(FILE *f, const char *fmt, va_list ap)
-{
-    /* TODO: Code */
-    return 0;
-}
-
-int
-vsscanf(char *str, const char *fmt, va_list ap)
-{
-    /* TODO: Code */
-    return 0;
 }
 
 int

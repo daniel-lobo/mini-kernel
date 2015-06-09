@@ -73,8 +73,6 @@ int main()
 	initializeBuffer();
 
 	((EntryPoint)shell_module_address)();
-	//video_set_screensaver();
-	//_syscall(0, 0, "hola", 4);
-	//syscall_handler(0,1,2,3,4,5);
+	
 	return 0;
 }

@@ -9,6 +9,7 @@ syscall_int:
 	$(ASM) $(ASMFLAGS) syscall.asm -o syscall_asm.o
 
 link:
+	mkdir -p ./lib
 	$(AR) rcs lib/libsyscall.a syscall_asm.o syscall.o
 
 clean:

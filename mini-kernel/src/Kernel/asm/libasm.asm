@@ -68,7 +68,7 @@ _set_handlers:
     ret
 
 align 16
-sys_soft:                                 ; Interrupciones de software, int 80h
+sys_soft:                                 ; int 80h handler
     push rdi
     cmp rdi, 0
     jz sys_write
@@ -191,7 +191,7 @@ hang:
 
 _enable_pic:
     in al, 0x21
-    mov al, 11111000b           ; Enable Keyboard
+    mov al, 11111000b           ; Enable Keyboard & pit
     out 0x21, al
     sti
     ret
