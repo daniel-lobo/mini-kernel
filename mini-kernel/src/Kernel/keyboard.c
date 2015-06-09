@@ -117,28 +117,28 @@ void initializeBuffer() {
 	currentKeyboard.state.capsLocked = 0;
 }
 
-bool sendToBuffer(unsigned char key) {
+bool sendToBuffer(char key) {
 	if (bufferIsFull() == true) {
 		currentKeyboard.enqueuePos = 0;
 		currentKeyboard.buffer[0] = (unsigned char)key;
 		currentKeyboard.enqueuePos++;
 		return true;
 	}
-	currentKeyboard.buffer[currentKeyboard.enqueuePos] = (unsigned char) key;
+	currentKeyboard.buffer[currentKeyboard.enqueuePos] = (unsigned char)key;
 	currentKeyboard.enqueuePos++;
 	return true;
 }
 
-bool updateStates(unsigned char key) {
+bool updateStates(char key) {
 	if (key == LEFT_SHIFT_MAKE || key == RIGHT_SHIFT_MAKE) {
 		currentKeyboard.state.shifted = !currentKeyboard.state.shifted;
 		return true;
 	}
 	else if (key == CAPS_LOCK) {
-		if (currentKeyboard.state.capsLocked == 0){
-			currentKeyboard.state.capsLocked = 1;
+		if (currentKeyboard.state.capsLocked ==0){
+			currentKeyboard.state.capsLocked =1;
 		} else {
-			currentKeyboard.state.capsLocked = 0;
+			currentKeyboard.state.capsLocked =0;
 		}
 		return true;
 	}
@@ -163,16 +163,16 @@ int indexOfKey() {
 }
 
 void keyboard_handler(uint64_t scancode) {
-	int index = indexOfKey();
-	unsigned char key = kbd_EN[(int)scancode][index];
+	int index= indexOfKey();
+	char key = kbd_EN[(int)scancode][index];
 
 	if(scancode & 0x80){
-		currentKeyboard.state.shifted = 0;		
+		if(scancode == LEFT_SHIFT_BREAK || scancode == RIGHT_SHIFT_BREAK) {
+			currentKeyboard.state.shifted = 0;	
+		}
 		return;	
 	}
-
 	if (updateStates(key) == true) {
-		video_write_char(key);
 		return;
 	}
 	else {
