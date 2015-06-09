@@ -81,7 +81,7 @@ char kbd_EN[][4] = {
 	{ 0x45, NOCHAR, NOCHAR, NOCHAR  },//num
 	{ 0x46, NOCHAR, NOCHAR, NOCHAR  },//scroll
 	{ 0x47, '7', NOCHAR, NOCHAR  },//keypad 7
-	{ 0x48, '8', NOCHAR, NOCHAR  },//keypad 8
+	{ 0x48, NOCHAR, NOCHAR, NOCHAR  },//keypad 8
 	{ 0x49, '9', NOCHAR, NOCHAR  },//keypad 9
 	{ 0x4a, '-', NOCHAR, NOCHAR  },//keypad -
 	{ 0x4b, NOCHAR, NOCHAR, NOCHAR  },//keypad 4
@@ -89,13 +89,14 @@ char kbd_EN[][4] = {
 	{ 0x4d, NOCHAR, NOCHAR, NOCHAR  },//keypad 6
 	{ 0x4e, '+', NOCHAR, NOCHAR  },//keypad +
 	{ 0x4f, '1', NOCHAR, NOCHAR  },//keypad 1
-	{ 0x50, '2', NOCHAR, NOCHAR  },//keypad 2
+	{ 0x50, NOCHAR, NOCHAR, NOCHAR  },//keypad 2
 	{ 0x51, '3', NOCHAR, NOCHAR  },//keypad 3
 	{ 0x52, '0', NOCHAR, NOCHAR  },//keypad 0
 	{ 0x53, '.', NOCHAR, NOCHAR  },//keypad 0
 	{ 0x57, NOCHAR, NOCHAR, NOCHAR },//f11
 	{ 0x58, NOCHAR, NOCHAR, NOCHAR }//f12
 };
+
 bool bufferIsEmpty(void) {
 	return currentKeyboard.enqueuePos == currentKeyboard.dequeuePos;
 }
