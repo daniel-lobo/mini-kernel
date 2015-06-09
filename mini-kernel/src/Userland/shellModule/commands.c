@@ -83,7 +83,7 @@ exec_set_ss(int argc, char **argv)
     int newTime = atoi(*argv);
 
     if (newTime <= 0) {
-        printf("New trigger time must be greater than 0\n")
+        printf("New trigger time must be greater than 0\n");
         return 1;
     }
 
