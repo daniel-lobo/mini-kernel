@@ -20,7 +20,7 @@ void video_clear();
 void video_refresh();
 
 void video_write_string(char * c);
-void video_write_char(char c);
+void video_write_char(unsigned char c);
 
 void video_put_char(int pos, char c);
 void video_nl();

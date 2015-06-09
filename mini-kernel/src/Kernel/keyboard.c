@@ -11,18 +11,18 @@ char kbd_EN[][4] = {
 	//USA
 	{ 0x00, NOCHAR, NOCHAR, NOCHAR }, //empty,
 	{ 0x01, NOCHAR, NOCHAR, NOCHAR }, //esc
-	{ 0x02, '1', '!', NOCHAR },
-	{ 0x03, '2', '@', NOCHAR },
-	{ 0x04, '3', '#', NOCHAR },
-	{ 0x05, '4', '$', NOCHAR },
-	{ 0x06, '5', '%', NOCHAR },
-	{ 0x07, '6', '^', NOCHAR },
-	{ 0x08, '7', '&', NOCHAR },
-	{ 0x09, '8', '*', NOCHAR },
-	{ 0x0A, '9', '(', NOCHAR },
-	{ 0x0B, '0', '"', NOCHAR },
-	{ 0x0C, '-', '_', NOCHAR },
-	{ 0x0D, '=', '+', NOCHAR },
+	{ 0x02, '1', '!', '1' },
+	{ 0x03, '2', '@', '2' },
+	{ 0x04, '3', '#', '3' },
+	{ 0x05, '4', '$', '4' },
+	{ 0x06, '5', '%', '5' },
+	{ 0x07, '6', '^', '6' },
+	{ 0x08, '7', '&', '7' },
+	{ 0x09, '8', '*', '8' },
+	{ 0x0A, '9', '(', '9' },
+	{ 0x0B, '0', '"', '0' },
+	{ 0x0C, '-', '_', '-' },
+	{ 0x0D, '=', '+', 'NOCHAR' },
 	{ 0x0E, '\b', '\b', '\b' }, //backspace
 	{ 0x0F, '\t', '\t', '\t' }, //tab
 	{ 0x10, 'q', 'Q', 'Q' },
@@ -35,8 +35,8 @@ char kbd_EN[][4] = {
 	{ 0x17, 'i', 'I', 'I' },
 	{ 0x18, 'o', 'O', 'O' },
 	{ 0x19, 'p', 'P', 'P' },
-	{ 0x1a, '[', '{', NOCHAR },
-	{ 0x1b, ']', '}', NOCHAR },
+	{ 0x1a, '[', '{', '[' },
+	{ 0x1b, ']', '}', ']' },
 	{ 0x1c, '\n', '\n', '\n' },//enter
 	{ 0x1d, NOCHAR, NOCHAR, NOCHAR },//left ctrl
 	{ 0x1e, 'a', 'A', 'A' },
@@ -48,9 +48,9 @@ char kbd_EN[][4] = {
 	{ 0x24, 'j', 'J', 'J' },
 	{ 0x25, 'k', 'K', 'K' },
 	{ 0x26, 'l', 'L', 'L' },
-	{ 0x27, ';', ':', NOCHAR },
-	{ 0x28, '\'', '"', NOCHAR },
-	{ 0x29, '`', '~', NOCHAR },
+	{ 0x27, ';', ':', ';' },
+	{ 0x28, '\'', '"', '\'' },
+	{ 0x29, '`', '~', '`' },
 	{ 0x2a, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE },//left shift
 	{ 0x2b, '\\', '|', NOCHAR },
 	{ 0x2c, 'z', 'Z', 'Z' },
@@ -60,9 +60,9 @@ char kbd_EN[][4] = {
 	{ 0x30, 'b', 'B', 'B' },
 	{ 0x31, 'n', 'N', 'N' },
 	{ 0x32, 'm', 'M', 'M' },
-	{ 0x33, ',', '<', NOCHAR },
-	{ 0x34, '.', '>', NOCHAR },
-	{ 0x35, '/', '?', NOCHAR },
+	{ 0x33, ',', '<', ',' },
+	{ 0x34, '.', '>', '.' },
+	{ 0x35, '/', '?', '/' },
 	{ 0x36, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE },//right shift
 	{ 0x37, '*', NOCHAR, NOCHAR  },//keypad *
 	{ 0x38, NOCHAR, NOCHAR, NOCHAR  },//left alt
@@ -116,28 +116,28 @@ void initializeBuffer() {
 	currentKeyboard.state.capsLocked = 0;
 }
 
-bool sendToBuffer(char key) {
+bool sendToBuffer(unsigned char key) {
 	if (bufferIsFull() == true) {
 		currentKeyboard.enqueuePos = 0;
 		currentKeyboard.buffer[0] = (unsigned char)key;
 		currentKeyboard.enqueuePos++;
 		return true;
 	}
-	currentKeyboard.buffer[currentKeyboard.enqueuePos] = (unsigned char)key;
+	currentKeyboard.buffer[currentKeyboard.enqueuePos] = (unsigned char) key;
 	currentKeyboard.enqueuePos++;
 	return true;
 }
 
-bool updateStates(char key) {
+bool updateStates(unsigned char key) {
 	if (key == LEFT_SHIFT_MAKE || key == RIGHT_SHIFT_MAKE) {
 		currentKeyboard.state.shifted = !currentKeyboard.state.shifted;
 		return true;
 	}
 	else if (key == CAPS_LOCK) {
-		if (currentKeyboard.state.capsLocked ==0){
-			currentKeyboard.state.capsLocked =1;
+		if (currentKeyboard.state.capsLocked == 0){
+			currentKeyboard.state.capsLocked = 1;
 		} else {
-			currentKeyboard.state.capsLocked =0;
+			currentKeyboard.state.capsLocked = 0;
 		}
 		return true;
 	}
@@ -162,8 +162,8 @@ int indexOfKey() {
 }
 
 void keyboard_handler(uint64_t scancode) {
-	int index= indexOfKey();
-	char key = kbd_EN[(int)scancode][index];
+	int index = indexOfKey();
+	unsigned char key = kbd_EN[(int)scancode][index];
 
 	if(scancode & 0x80){
 		if(scancode == LEFT_SHIFT_BREAK || scancode == RIGHT_SHIFT_BREAK) {

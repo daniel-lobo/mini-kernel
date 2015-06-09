@@ -58,7 +58,7 @@ video_write_string(char * content)
 }
 
 void
-video_write_char(char content)
+video_write_char(unsigned char content)
 {	
 	switch(content){
     case '\n':

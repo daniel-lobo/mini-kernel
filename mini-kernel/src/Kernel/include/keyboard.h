@@ -3,8 +3,8 @@
 
 #include <stdint.h>
 
-#define LEFT_SHIFT_MAKE   (char)0x2A
-#define RIGHT_SHIFT_MAKE    (char)0x36
+#define LEFT_SHIFT_MAKE   	0x2A
+#define RIGHT_SHIFT_MAKE    0x36
 #define CAPS_LOCK           (char)0x3A
 #define LEFT_SHIFT_BREAK    (char)0xAA
 #define RIGHT_SHIFT_BREAK   (char)0xB6
@@ -39,8 +39,8 @@ typedef enum {false, true} bool;
 bool bufferIsEmpty(void);
 bool bufferIsFull(void);
 void initializeBuffer();
-bool sendToBuffer(char key);
-bool updateStates(char key);
+bool sendToBuffer(unsigned char key);
+bool updateStates(unsigned char key);
 int indexOfKey();
 void keyboard_handler(uint64_t scancode);
 int pop();
