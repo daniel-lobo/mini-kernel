@@ -35,8 +35,8 @@ char kbd_EN[][4] = {
 	{ 0x17, 'i', 'I', 'I' },
 	{ 0x18, 'o', 'O', 'O' },
 	{ 0x19, 'p', 'P', 'P' },
-	{ 0x1a, '[', '{', NOCHAR },
-	{ 0x1b, ']', '}', NOCHAR },
+	{ 0x1a, '[', '{', '[' },
+	{ 0x1b, ']', '}', ']' },
 	{ 0x1c, '\n', '\n', '\n' },//enter
 	{ 0x1d, NOCHAR, NOCHAR, NOCHAR },//left ctrl
 	{ 0x1e, 'a', 'A', 'A' },
@@ -48,9 +48,9 @@ char kbd_EN[][4] = {
 	{ 0x24, 'j', 'J', 'J' },
 	{ 0x25, 'k', 'K', 'K' },
 	{ 0x26, 'l', 'L', 'L' },
-	{ 0x27, ';', ':', NOCHAR },
-	{ 0x28, '\'', '"', NOCHAR },
-	{ 0x29, '`', '~', NOCHAR },
+	{ 0x27, ';', ':', ';' },
+	{ 0x28, '\'', '"', '\'' },
+	{ 0x29, '`', '~', '`' },
 	{ 0x2a, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE },//left shift
 	{ 0x2b, '\\', '|', NOCHAR },
 	{ 0x2c, 'z', 'Z', 'Z' },
@@ -60,9 +60,9 @@ char kbd_EN[][4] = {
 	{ 0x30, 'b', 'B', 'B' },
 	{ 0x31, 'n', 'N', 'N' },
 	{ 0x32, 'm', 'M', 'M' },
-	{ 0x33, ',', '<', NOCHAR },
-	{ 0x34, '.', '>', NOCHAR },
-	{ 0x35, '/', '?', NOCHAR },
+	{ 0x33, ',', '<', ',' },
+	{ 0x34, '.', '>', '.' },
+	{ 0x35, '/', '?', '/' },
 	{ 0x36, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE },//right shift
 	{ 0x37, '*', NOCHAR, NOCHAR  },//keypad *
 	{ 0x38, NOCHAR, NOCHAR, NOCHAR  },//left alt
