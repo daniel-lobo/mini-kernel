@@ -37,6 +37,12 @@ rtc_time(void)
         hour = ( (hour & 0x0F) + (((hour & 0x70) / 16) * 10) ) | (hour & 0x80);
     }
 
+    hour -= 3;
+
+    if (hour < 0){
+        hour += 24;
+    }
+
     return second + minute * 100 + hour * 10000;
 }
 
@@ -59,6 +65,15 @@ rtc_set_time(int time)
 void
 rtc_startup_fix()
 {
-    int tim = rtc_time();
-    rtc_set_time(tim - 3*10000);
+    int rtc = rtc_time();
+
+    int hour = (rtc / 10000) - 3;
+    int min = (rtc / 100) % 100;
+    int sec = rtc % 100;
+
+    if (hour < 0){
+        hour += 24;
+    }
+
+    rtc_set_time(sec + min * 100 + hour * 10000);
 }
