@@ -8,5 +8,6 @@ void sh_tokenize(char buf[], int *argc, char *argv[]);
 void display_prompt();
 
 int execute(int argc, char **argv);
+void sh_clean_buffer(char * buf);
 
 #endif

@@ -28,19 +28,11 @@ int
 getc(FILE *stream)
 {
     char ch;
-    if (stream->lastc)
+    while (!read(stream->fd, (void *)&ch, 1))
     {
-        ch = stream->lastc;
-        stream->lastc = 0;
-        return (int)ch;
-    }
-    int red = read(stream->fd, (void *)&ch, 1);
-    while (!red)
-    {
-        red = read(stream->fd, (void *)&ch, 1);
         _hlt();
     }
-    return red;
+    return (int)ch;
 }
 
 void
@@ -89,26 +81,25 @@ gets(char *s, int size)
 char *
 fgets(char *s, int size, FILE *stream)
 {
-    char c;
+    char c = getc(stream);
     int i = 0; 
-    int stop = 0;
+    int j = 0;
 
-    while (i < size && !stop)
-    {
+    while (i < size - 1 && c != '\n' && c != EOF){
+        if (c == '\b') {
+            if (i > 0) {
+                putchar(c);
+                i--;
+            }
+        } else {
+            s[i++] = c;
+            putchar(c);
+        }        
         c = getc(stream);
-        if (c != '\n' && c != EOF)
-        {
-            if (c == '\b'){
-                i = (i - 1 < 0)? 0: i-1;
-            }else{
-                s[i++] = c;
-            }    
-        }else{
-            stop = 1;
-        }
     }
     s[i] = 0;
-    return (i != 0 && !strcmp(s, "")) ? s : NULL;
+    putchar('\n');
+    return (i != 0) ? s : NULL;
 }
 
 int

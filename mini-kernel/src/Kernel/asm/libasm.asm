@@ -207,6 +207,7 @@ sys_pit:                 ; INT 0x08 Handler (Timertick)
     iretq
 
 sys_keyboard:                  ; INT 0x09 Handler (Keyboard)
+    cli
     push rdi
     push rax
     xor eax, eax
@@ -217,6 +218,7 @@ sys_keyboard:                  ; INT 0x09 Handler (Keyboard)
     out 0x20, al
     pop rax
     pop rdi
+    sti
     iretq
 
 sys_is_ss_on:

@@ -7,21 +7,35 @@
 
 uint32_t write_handler(int fd, char * s, int len)
 {
-	if (s[0] == '\0')
-	{
-		return -1;
+	unsigned int i = 0;    
+    while( i < len){
+		char key = ((char*)s)[i++];
+		if(fd == STDIN_FILENO){
+			sendToBuffer(key);
+		} else if (fd == STDOUT_FILENO){
+			video_write_char(key);
+		}
 	}
-	video_write_char(s[0]);
-	return s[0];
+    return i;
 }
 
 uint32_t read_handler(int fd, char * s, int len)
 {
-	if (!bufferIsEmpty())
-	{
-		return pop();
-	}
-	return 0;
+	int readCharacters = 0;
+    if(fd == STDIN_FILENO){
+        int aux;
+        while(readCharacters < len){
+        	aux = pop();
+        	if (bufferIsFull()){
+        		clean_buffer();
+        	}
+		    if(aux != -1){
+	            s[readCharacters++] = aux;
+	        }
+		}
+    }
+
+    return readCharacters;
 }
 
 uint32_t rtc_handler()

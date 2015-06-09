@@ -43,7 +43,7 @@ bool sendToBuffer(char key);
 bool updateStates(char key);
 int indexOfKey();
 void keyboard_handler(uint64_t scancode);
-unsigned char pop();
+int pop();
 void clean_buffer();
 void delete_from_buffer();
 

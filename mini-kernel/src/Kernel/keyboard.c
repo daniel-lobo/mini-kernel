@@ -179,31 +179,16 @@ void keyboard_handler(uint64_t scancode) {
 			if (!is_ss_on()){
 				sendToBuffer(key);
 			}
-			if (key == '\n'){
-				if (stroke_counter > 0){					
-					video_write_char(key);
-				}
-				stroke_counter = 0;
-			}else if (key == '\b'){
-				stroke_counter--;
-				if (stroke_counter >= 0){					
-					video_write_char(key);
-				} 
-			}else{
-				stroke_counter++;
-				video_write_char(key);
-			}
 		}	
 	}
 	video_refresh();
 	return;
 }
 
-unsigned char
+int
 pop()
 {
-	unsigned char c = -1;
-	int i;
+	int c = -1;
 	if (!bufferIsEmpty())
 	{
 		c = currentKeyboard.buffer[currentKeyboard.dequeuePos];
@@ -227,6 +212,11 @@ delete_from_buffer()
 void
 clean_buffer()
 {
+	int i = 0;
+	for (i = 0; i < BUFFER_SIZE; i++)
+	{
+		currentKeyboard.buffer[i] = 0;
+	}
 	currentKeyboard.enqueuePos = 0;
 	currentKeyboard.dequeuePos = 0;
 }

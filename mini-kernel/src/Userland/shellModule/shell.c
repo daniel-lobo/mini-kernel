@@ -44,11 +44,10 @@ sh_show_prompt()
     {
         gets(buf, sizeof(buf));
         trim(buf);
-
         if (strlen(buf) > 0)
         {
             sc_set_format(LIGHT_GREY);
-            sh_do_command(buf);
+            sh_do_command(buf);            
             sh_clean_buffer(buf);
             display_prompt();
         }
@@ -97,7 +96,7 @@ execute(int argc, char **argv)
         i++;
     }
 
-    printf("%s: invalid command\n", argv[0]);
+    printf("%s: Not a valid command\n", argv[0]);
     return 1;
 }
 
