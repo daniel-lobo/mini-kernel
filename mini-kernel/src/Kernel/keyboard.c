@@ -167,11 +167,13 @@ void keyboard_handler(uint64_t scancode) {
 	unsigned char key = kbd_EN[(int)scancode][index];
 
 	if(scancode & 0x80){
-		if(scancode == LEFT_SHIFT_BREAK || scancode == RIGHT_SHIFT_BREAK) {
-			currentKeyboard.state.shifted = 0;	
-		}
+		// this seems bloody useless, dude:
+		// if(scancode == LEFT_SHIFT_BREAK || scancode == RIGHT_SHIFT_BREAK) {
+		// }
+		currentKeyboard.state.shifted = 0;		
 		return;	
 	}
+
 	if (updateStates(key) == true) {
 		return;
 	}
