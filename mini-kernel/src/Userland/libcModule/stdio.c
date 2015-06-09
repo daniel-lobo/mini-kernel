@@ -83,7 +83,6 @@ fgets(char *s, int size, FILE *stream)
 {
     char c = getc(stream);
     int i = 0; 
-    int j = 0;
 
     while (i < size - 1 && c != '\n' && c != EOF){
         if (c == '\b') {

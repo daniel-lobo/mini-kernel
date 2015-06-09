@@ -11,8 +11,8 @@ uint8_t cur_format = 0x00;
 uint8_t * vga_hw = (uint8_t *) SCREEN_START;
 
 // 30 seg default
-uint64_t scrensaver_timer = 428;
-uint64_t aux = 428;
+uint64_t scrensaver_timer = 540;
+uint64_t aux = 540;
 
 void
 video_init()
@@ -237,10 +237,10 @@ void
 video_set_terminal()
 {
 	if (is_ss_on())
-	{		
+	{
 		cur_screen = screens[1];
-		set_ss_timer(aux);
 		video_update_screen();
+		ss_reset_clock();	
 		ss_on = 0;
 	}
 }
@@ -287,5 +287,5 @@ ss_reset_clock()
 void
 set_ss_timer(uint64_t t)
 {
-	scrensaver_timer = aux = t*1.42857;
+	scrensaver_timer = aux = t * 18;
 }
