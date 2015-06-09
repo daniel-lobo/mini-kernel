@@ -79,6 +79,14 @@ int
 exec_set_ss(int argc, char **argv)
 {
     args_shift(1, &argc, &argv);
+
+    int newTime = atoi(*argv);
+
+    if (newTime <= 0) {
+        printf("New trigger time must be greater than 0\n");
+        return 1;
+    }
+
     sc_set_screensaver_timer(atoi(*argv));
 
 	return 0;
