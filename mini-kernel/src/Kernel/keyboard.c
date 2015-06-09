@@ -51,7 +51,7 @@ char kbd_EN[][4] = {
 	{ 0x27, ';', ':', ';' },
 	{ 0x28, '\'', '"', '\'' },
 	{ 0x29, '`', '~', '`' },
-	{ 0x2a, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE, LEFT_SHIFT_MAKE },//left shift
+	{ 0x2a, LEFT_SHIFT_MAKE, NOCHAR, LEFT_SHIFT_MAKE },//left shift
 	{ 0x2b, '\\', '|', NOCHAR },
 	{ 0x2c, 'z', 'Z', 'Z' },
 	{ 0x2d, 'x', 'X', 'X' },
@@ -63,7 +63,7 @@ char kbd_EN[][4] = {
 	{ 0x33, ',', '<', ',' },
 	{ 0x34, '.', '>', '.' },
 	{ 0x35, '/', '?', '/' },
-	{ 0x36, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE, RIGHT_SHIFT_MAKE },//right shift
+	{ 0x36, RIGHT_SHIFT_MAKE, NOCHAR, RIGHT_SHIFT_MAKE },//right shift
 	{ 0x37, '*', NOCHAR, NOCHAR  },//keypad *
 	{ 0x38, NOCHAR, NOCHAR, NOCHAR  },//left alt
 	{ 0x39, ' ', ' ', NOCHAR  },
@@ -167,14 +167,12 @@ void keyboard_handler(uint64_t scancode) {
 	unsigned char key = kbd_EN[(int)scancode][index];
 
 	if(scancode & 0x80){
-		// this seems bloody useless, dude:
-		// if(scancode == LEFT_SHIFT_BREAK || scancode == RIGHT_SHIFT_BREAK) {
-		// }
 		currentKeyboard.state.shifted = 0;		
 		return;	
 	}
 
 	if (updateStates(key) == true) {
+		video_write_char(key);
 		return;
 	}
 	else {
