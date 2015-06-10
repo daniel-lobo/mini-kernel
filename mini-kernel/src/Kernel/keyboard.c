@@ -142,10 +142,6 @@ bool updateStates(char key) {
 		}
 		return true;
 	}
-	else if (key == CONTROL_R) {
-		currentKeyboard.state.alted = !currentKeyboard.state.alted;
-		return true;
-	}
 	return false;
 }
 
