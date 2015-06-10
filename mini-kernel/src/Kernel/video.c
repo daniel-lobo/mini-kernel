@@ -104,7 +104,7 @@ screen_mv_pos_backwards()
 	{
 		if (cur_screen.y > 0)
 		{
-			cur_screen.x = SCREEN_WIDTH;
+			cur_screen.x = SCREEN_WIDTH - 1;
 			cur_screen.y = cur_screen.y - 1;
 		}
 	}
@@ -117,7 +117,7 @@ screen_mv_pos_backwards()
 void
 screen_mv_pos_forwards()
 {
-	if (cur_screen.x == SCREEN_WIDTH )
+	if (cur_screen.x == SCREEN_WIDTH - 1)
 	{
 		if (cur_screen.y + 1 < SCREEN_HEIGHT)
 		{
@@ -140,10 +140,10 @@ video_update_cursor()
 {
 	unsigned short position = (cur_screen.y * SCREEN_WIDTH) + cur_screen.x + 1;
  
-    _outb(0x0F, 0x3D4);
+    _outb(0x3D4, 0x0F);
     _outb((unsigned char)(position & 0xFF), 0x3D5);
 
-    _outb(0x0E, 0x3D5);
+    _outb(0x3D5, 0x0E);
     _outb((unsigned char)((position >> 8) & 0xFF), 0x3D5);
 }
 
