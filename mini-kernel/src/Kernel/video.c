@@ -197,12 +197,12 @@ video_scroll()
 	
 	int i;
 
-	for (i = 0; i < (SCREEN_WIDTH - 1) * SCREEN_HEIGHT; i++)
+	for (i = 0; i < SCREEN_WIDTH * (SCREEN_HEIGHT -1); i++)
 	{
 		cur_screen.content[i] = cur_screen.content[i + SCREEN_WIDTH];
 		cur_screen.format[i] = cur_screen.format[i + SCREEN_WIDTH];
 	}
-	for (i = (SCREEN_WIDTH - 1) * SCREEN_HEIGHT; i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
+	for (i = SCREEN_WIDTH * (SCREEN_HEIGHT -1); i < SCREEN_WIDTH * SCREEN_HEIGHT; i++)
 	{
 		cur_screen.content[i] = ' ';
 		cur_screen.format[i] = 0x00;
