@@ -152,9 +152,6 @@ int indexOfKey() {
 	else if (currentKeyboard.state.capsLocked == 1) {
 		return CAPSLOCKEDCOLUMN;
 	}
-	else if (currentKeyboard.state.alted == 1) {
-		return ALTEDCOLUMN;
-	}
 	return NORMALCOLUMN;
 }
 
