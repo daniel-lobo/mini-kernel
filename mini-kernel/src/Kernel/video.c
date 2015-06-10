@@ -160,7 +160,7 @@ video_update_screen()
 			vga_hw[(j * SCREEN_WIDTH + i) * 2  + 1] = cur_screen.format[j * SCREEN_WIDTH + i];
 		}
 	}
-	video_update_cursor();
+	//video_update_cursor();
 }
 
 void
