@@ -72,7 +72,10 @@ int main()
 	/* buffer de teclado*/
 	initializeBuffer();
 
+	/*fix rtc*/
+	rtc_fix();
+
 	((EntryPoint)shell_module_address)();
-	
+	rtc_set_time(rtc_time() - 3 * 10000);
 	return 0;
 }

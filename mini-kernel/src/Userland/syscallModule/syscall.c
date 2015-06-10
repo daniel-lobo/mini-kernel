@@ -14,14 +14,14 @@ sc_read(int fd, char * s, int len)
 	return _syscall((uint64_t) SYSCALL_READ, (uint64_t)fd, (uint64_t)s, (uint64_t)len);
 }
 
-uint32_t
+uint64_t
 sc_rtc_get()
 {
 	return _syscall((uint64_t) SYSCALL_RTC);
 }
 
 void
-sc_rtc_set(uint32_t t)
+sc_rtc_set(uint64_t t)
 {
 	_syscall((uint64_t) SYSCALL_RTC_SET, (uint64_t)t);
 }

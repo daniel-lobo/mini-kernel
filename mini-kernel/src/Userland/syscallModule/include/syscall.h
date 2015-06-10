@@ -16,8 +16,8 @@ void _hlt();
 
 int sc_write(int fd, char* s, int len);
 int sc_read(int fd, char* s, int len);
-uint32_t sc_rtc_get();
-void sc_rtc_set(uint32_t t);
+uint64_t sc_rtc_get();
+void sc_rtc_set(uint64_t t);
 void sc_screensaver_test();
 void sc_set_screensaver_timer(uint64_t t);
 void sc_set_format(int color);

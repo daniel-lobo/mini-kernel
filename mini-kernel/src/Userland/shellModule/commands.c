@@ -49,6 +49,18 @@ exec_set_rtc(int argc, char **argv)
     int min = atoi(*argv++);
     int sec = atoi(*argv++);
 
+    if (hour < 0 || hour > 24){
+        printf("Invalid hour \n");
+    }
+
+    if (min < 0 || min > 60){
+        printf("Invalid minutes \n");
+    }
+
+    if (sec < 0 || sec > 60){
+        printf("Invalid seconds \n");
+    }
+
     sc_rtc_set(hour * 10000 + min * 100 + sec);
 
     return 0;

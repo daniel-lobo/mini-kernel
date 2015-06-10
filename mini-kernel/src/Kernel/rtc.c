@@ -1,10 +1,11 @@
 #include "./include/rtc.h"
 #include "./include/kasm.h"
 
+
 #define CMOS_ADDRESS 0x70
 #define CMOS_DATA    0x71
 
-char
+int
 read_cmos_register(unsigned int number)
 {
     _outb(number, CMOS_ADDRESS);
@@ -18,8 +19,8 @@ get_update_in_progress_flag(void)
     return _inb(CMOS_DATA) & 0x80;
 }
 
-int
-rtc_time(void)
+uint64_t
+rtc_time()
 {
     while (get_update_in_progress_flag());
 
@@ -37,22 +38,24 @@ rtc_time(void)
         hour = ( (hour & 0x0F) + (((hour & 0x70) / 16) * 10) ) | (hour & 0x80);
     }
 
-    hour -= 3;
-
-    if (hour < 0){
-        hour += 24;
-    }
-
     return second + minute * 100 + hour * 10000;
 }
 
 int
-rtc_set_time(int time)
+rtc_set_time(uint64_t time)
 {
-    int hour = time / 10000;
-    int min = (time / 100) % 100;
-    int sec = time % 100;
-    
+    int hour = (int)  (time / 10000);
+    int min = (int) (time / 100) % 100;
+    int sec = (int) time % 100;
+
+    int registerB = read_cmos_register(0x0B);
+
+    if (!(registerB & 0x04)) {
+        sec = ((((sec) / 10) * 16) | (sec % 10));
+        min = ((((min) / 10) * 16) | (min % 10));
+        hour = ((((hour) / 10) * 16) | (hour % 10));
+    }
+
     _outb(0x00, CMOS_ADDRESS);
     _outb(sec, CMOS_DATA);
     _outb(0x02, CMOS_ADDRESS);
@@ -63,17 +66,17 @@ rtc_set_time(int time)
 }
 
 void
-rtc_startup_fix()
+rtc_fix()
 {
-    int rtc = rtc_time();
+    int time = rtc_time();
 
-    int hour = (rtc / 10000) - 3;
-    int min = (rtc / 100) % 100;
-    int sec = rtc % 100;
+    int hour = (int)  (time / 10000) - 3;
+    int minute = (int) (time / 100) % 100;
+    int second = (int) time % 100;
 
-    if (hour < 0){
+    if (hour - 3 < 0) {
         hour += 24;
     }
 
-    rtc_set_time(sec + min * 100 + hour * 10000);
+    rtc_set_time(second + minute * 100 + hour * 10000);
 }

@@ -38,12 +38,12 @@ uint32_t read_handler(int fd, char * s, int len)
     return readCharacters;
 }
 
-uint32_t rtc_handler()
+uint64_t rtc_handler()
 {
 	return rtc_time();
 }
 
-void rtc_set_handler(uint32_t t)
+void rtc_set_handler(uint64_t t)
 {
 	rtc_set_time(t);
 }
