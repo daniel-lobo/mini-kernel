@@ -15,6 +15,7 @@ extern ss_test_handler
 extern ss_set_handler
 extern format_set_handler
 extern ss_status_handler
+extern sbrk_handler
 
 _outb:
     push    rbp
@@ -86,6 +87,21 @@ sys_soft:                                 ; int 80h handler
     jz sys_set_color
     cmp rdi, 7
     jz sys_is_ss_on
+    cmp rdi, 8
+    jz sys_sbrk
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_sbrk:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call sbrk_handler
     push rax
     mov al, 0x20
     out 0x20, al

@@ -49,3 +49,7 @@ sc_screensaver_status()
 {
 	return _syscall((uint64_t) SYSCALL_IS_SS_ON);
 }
+
+void * sc_sbrk(){
+	return _syscall((uint64_t) SYSCALL_SBRK);
+}

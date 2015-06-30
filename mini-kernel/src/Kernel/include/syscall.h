@@ -8,6 +8,8 @@
 #define STDOUT_FILENO   1
 #define STDERR_FILENO   2
 
+#define ENONMEM -1
+
 void pit_handler();
 void keyboard_handler();
 uint32_t write_handler();
