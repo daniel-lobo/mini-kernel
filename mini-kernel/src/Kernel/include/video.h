@@ -27,7 +27,6 @@ void video_nl();
 void screen_mv_pos_backwards();
 void screen_mv_pos_forwards();
 
-void video_update_cursor();
 void video_update_screen();
 void video_scroll();
 

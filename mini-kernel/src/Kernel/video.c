@@ -136,18 +136,6 @@ screen_mv_pos_forwards()
 }
 
 void
-video_update_cursor()
-{
-	unsigned short position = (cur_screen.y * SCREEN_WIDTH) + cur_screen.x + 1;
- 
-    _outb(0x3D4, 0x0F);
-    _outb((unsigned char)(position & 0xFF), 0x3D5);
-
-    _outb(0x3D5, 0x0E);
-    _outb((unsigned char)((position >> 8) & 0xFF), 0x3D5);
-}
-
-void
 video_update_screen()
 {
 	vga_hw[(SCREEN_HEIGHT * SCREEN_WIDTH -1) * 2 ] = 'x';
@@ -160,7 +148,6 @@ video_update_screen()
 			vga_hw[(j * SCREEN_WIDTH + i) * 2  + 1] = cur_screen.format[j * SCREEN_WIDTH + i];
 		}
 	}
-	//video_update_cursor();
 }
 
 void

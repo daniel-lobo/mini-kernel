@@ -11,7 +11,6 @@
 #define SYSCALL_IS_SS_ON 7
 #define SYSCALL_SBRK 8
 #define SYSCALL_ERROR  -1
-#define ENONMEM -1
 
 uint64_t _syscall(uint64_t callid, ...);
 void _hlt();
@@ -23,7 +22,7 @@ void sc_rtc_set(uint64_t t);
 void sc_screensaver_test();
 void sc_set_screensaver_timer(uint64_t t);
 void sc_set_format(int color);
-int sc_screensaver_status();​
+int sc_screensaver_status();
 void * sc_sbrk();
 
 #endif
