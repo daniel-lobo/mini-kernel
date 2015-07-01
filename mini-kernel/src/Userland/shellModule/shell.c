@@ -22,6 +22,7 @@ command_t commands[] = {
     { "prtc", exec_print_rtc },
     { "sstest", exec_test_ss },
     { "sstime", exec_set_ss },
+    { "hstring", exec_heap_test },
     { NULL, NULL }
 };
 

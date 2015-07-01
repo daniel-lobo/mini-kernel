@@ -104,6 +104,27 @@ exec_set_ss(int argc, char **argv)
 	return 0;
 }
 
+int 
+exec_heap_test(int argc, char **argv){
+
+    args_shift(1, &argc, &argv);
+    char ** addresses;
+    int i;
+
+    for (i = 0; i < argc; i++)
+    {
+        addresses[i] = (char *) malloc(strlen(*argv));
+        strcpy(str, *argv++);
+        printf("String: %s,  Address: %u\n", str, str);
+    }
+    for (i = 0; i < argc; i++)
+    {
+        free((void *) address[i])
+        printf("Freeing address: %u\n", address[i]);
+        i++;
+    }
+}
+
 int
 args_shift(int n, int *argc, char ***argv)
 {
