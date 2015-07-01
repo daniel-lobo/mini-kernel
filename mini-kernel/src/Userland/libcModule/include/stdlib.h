@@ -1,6 +1,14 @@
 #ifndef _STDLIB_H
 #define _STDLIB_H
-
+#define HEADERBLOCK_SIZE 
+struct block{
+	int size;
+	block * next;
+	block * prev;
+	int free;
+	void* dataPointer;
+	char data[1];	
+}typedef struct block *type_block
 int     rand(void);
 void    srand(unsigned int seed);
 
