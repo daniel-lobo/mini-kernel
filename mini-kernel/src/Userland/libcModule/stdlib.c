@@ -203,6 +203,54 @@ type_block expandHeap(block lastBlock,int size){
 	
 	return (b);	
 }	
-	
-	
+
+void * free(void *address){
+	type_block blockToFree;
+	if(validAddress(address)){
+		blockToFree=getBlockFromAddress(address);
+		blockToFree->free=1;
+		//Try to merge with next or previous block if they're free to avoid fragmentation
+		if(blockToFree->prev && blockToFree->prev->free){
+			blockToFree= mergeFreeBlocksBlocks(blockToFree->prev,blockToFree);
+		}
+		if(blockToFree->next){
+			if(blockToFree->next->free){
+				blockToFree=mergeFreeBlocksBlocks(blockToFree,blockToFree->next);
+			}
+		}else{
+			//Check if the resultant block is the only one and reset baseHeapAddress
+			if (blockToFree->prev){
+				blockToFree->prev->next = NULL;
+			}else{
+				baseHeapAddress = NULL;
+			}
+		}
+	}
+}
+type_block mergeFreeBlocks(t_block prev,t_block next){
+	//Merges the block
+	if (b->next && b->next ->free ){
+		prev->size += HEADERBLOCK_SIZE + next->size;
+		prev->next = next->next;
+		if (prev->next)
+			prev->next ->prev = b;
+	}
+	return (prev);
+ }
+ 
+ int validAddress(void * address){
+		if(baseHeapAddress){
+			if(address>baseHeapAddress && address< lastSbrk){
+				return (address==getBlockFromAddress(address)->dataPointer);
+			}
+		}
+		return (0);
+}
+type_block getBlockFromAddress(void * address){
+		//address should not be modified
+		char * ptr;
+		ptr =address;
+		return (address=ptr-=HEADERBLOCK_SIZE);
+}
+
 	

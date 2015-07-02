@@ -1,6 +1,6 @@
 #ifndef _STDLIB_H
 #define _STDLIB_H
-#define HEADERBLOCK_SIZE 
+#define HEADERBLOCK_SIZE 32
 struct block{
 	int size;
 	block * next;
