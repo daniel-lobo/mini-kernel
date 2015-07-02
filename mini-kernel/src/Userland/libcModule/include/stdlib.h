@@ -33,4 +33,9 @@ type_block findBlock(type_block *lastBlock, int size);
 type_block splitBlock(type_block b, int size);
 type_block expandHeap(type_block lastBlock, int size);
 
+void free(void * address);
+int validAddress(void * address);
+type_block mergeFreeBlocks(type_block prev, type_block blockToFree);
+type_block getBlockFromAddress(void * address);
+
 #endif

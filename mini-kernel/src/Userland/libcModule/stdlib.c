@@ -152,9 +152,8 @@ void * malloc(int size){
 			//Couldn't expand heap
 			return NULL;
 		}
-		//baseHeapAddress = currentBlock;
 	}
-	return (void *)((char *)currentBlock + METADATA_SIZE);
+	return (void *)(currentBlock + 1);
 }
 
 type_block findBlock(type_block *lastBlock, int size){
@@ -168,7 +167,7 @@ type_block findBlock(type_block *lastBlock, int size){
 
 type_block splitBlock(type_block b, int size){
 	type_block newBlock;
-	newBlock = (type_block)((char *)b + METADATA_SIZE + size);
+	newBlock = (type_block)((char *)(b + 1) + size);
 	newBlock->next = b->next;
 	newBlock->prev = b;
 	newBlock->free = 1;
@@ -184,7 +183,7 @@ type_block splitBlock(type_block b, int size){
 }
 
 type_block expandHeap(type_block lastBlock, int size){	
-	while((char *)lastBlock + size + METADATA_SIZE > (char *)lastSbrk){
+	while((char *)(lastBlock + 1) + size > (char *)lastSbrk){
 		lastSbrk = sc_sbrk();
 		if (lastSbrk == (void *)ENOMEM){
 			return NULL;
@@ -197,78 +196,52 @@ type_block expandHeap(type_block lastBlock, int size){
 	
 	return lastBlock;	
 }	
-}
 
-type_block expandHeap(block lastBlock,int size){
-	int sb;
-	type_block b;
-	int flag=lastSbrk==NULL;
-	
-	while(lastblock+size+ HEADERBLOCK_SIZE > lastSbrk){
-		lastSbrk=sc_sbrk();
-	}
-	
-	b=lastBlock;
-	if(!flag){
-		b->prev=lastBlock->prev;
-	}else{
-		b->prev=NULL;
-	}
-	b->free=0;
-	b->dataPointer=b->data;
-	b->size=lastSbrk-lastBlock-HEADERBLOCK_SIZE;
-	splitBlock(b,size);
-	
-	return (b);	
-}	
-
-void * free(void *address){
+void free(void * address){
 	type_block blockToFree;
 	if(validAddress(address)){
-		blockToFree=getBlockFromAddress(address);
-		blockToFree->free=1;
+		blockToFree = getBlockFromAddress(address);
+		blockToFree->free = 1;
 		//Try to merge with next or previous block if they're free to avoid fragmentation
 		if(blockToFree->prev && blockToFree->prev->free){
-			blockToFree= mergeFreeBlocksBlocks(blockToFree->prev,blockToFree);
+			blockToFree = mergeFreeBlocks(blockToFree->prev, blockToFree);
 		}
 		if(blockToFree->next){
+			//Check wether the next one is also free for a merge
 			if(blockToFree->next->free){
-				blockToFree=mergeFreeBlocksBlocks(blockToFree,blockToFree->next);
+				blockToFree = mergeFreeBlocks(blockToFree, blockToFree->next);
 			}
 		}else{
-			//Check if the resultant block is the only one and reset baseHeapAddress
+			//If it was the last block, make it go boom
 			if (blockToFree->prev){
 				blockToFree->prev->next = NULL;
-			}else{
-				baseHeapAddress = NULL;
 			}
 		}
 	}
 }
-type_block mergeFreeBlocks(t_block prev,t_block next){
+
+type_block mergeFreeBlocks(type_block prev, type_block blockToFree){
 	//Merges the block
-	if (b->next && b->next ->free ){
-		prev->size += HEADERBLOCK_SIZE + next->size;
-		prev->next = next->next;
-		if (prev->next)
-			prev->next ->prev = b;
+	prev->size += METADATA_SIZE + blockToFree->size;
+	prev->next = blockToFree->next;
+	if (prev->next){
+		prev->next->prev = blockToFree;
 	}
-	return (prev);
+	return prev;
  }
  
- int validAddress(void * address){
+int validAddress(void * address){
 		if(baseHeapAddress){
-			if(address>baseHeapAddress && address< lastSbrk){
-				return (address==getBlockFromAddress(address)->dataPointer);
+			if(address >= (void *)baseHeapAddress && address < (void *)lastSbrk){
+				return address == (getBlockFromAddress(address) + 1);
 			}
 		}
-		return (0);
+		return 0;
 }
+
 type_block getBlockFromAddress(void * address){
-		//address should not be modified
-		char * ptr;
-		ptr =address;
-		return (address=ptr-=HEADERBLOCK_SIZE);
+		//get block from data pointer
+		return (type_block)((char *)address - METADATA_SIZE);
 }
 
 	
