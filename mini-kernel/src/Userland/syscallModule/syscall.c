@@ -53,3 +53,7 @@ sc_screensaver_status()
 void * sc_sbrk(){
 	return (void *)_syscall((uint64_t) SYSCALL_SBRK);
 }
+
+void * sc_getBaseHeapAddress(){
+	return (void *)_syscall((uint64_t) SYSCALL_BHADD);
+}

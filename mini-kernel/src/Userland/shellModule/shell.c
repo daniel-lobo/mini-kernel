@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "./include/commands.h"
 #include "./include/shell.h"
+#include "../libcModule/include/stdlib.h"
 #include "../libcModule/include/stdio.h"
 #include "../libcModule/include/ctype.h"
 #include "../libcModule/include/string.h"
@@ -40,7 +41,8 @@ sh_show_prompt()
 {
     display_prompt();
     char buf[MAX_ARGS];
-
+    // type_block blockTest;
+    // printf("size of struct %d, mem:%u, size_add:%u, next_add:%u, prev_add:%u, free_add:%u, data:%u\n",sizeof(struct block), blockTest, blockTest->size, blockTest->next, blockTest->prev, blockTest->free, (type_block)((char *)blockTest + METADATA_SIZE));
     while (1)
     {
         gets(buf, sizeof(buf));

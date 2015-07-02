@@ -1,14 +1,16 @@
-#include "./include/stdlib.h"
+
 #include <stdint.h>
+#include "./include/stdlib.h"
 #include "./include/string.h"
 #include "./include/ctype.h"
 #include "../syscallModule/include/syscall.h"
+
 #define align(x) ((x+3)&(~3))
 
 int errno;
 unsigned long rand_seed = 4;
-void * baseHeapAddress;
-void * lastSbrk=NULL;
+type_block baseHeapAddress;
+void * lastSbrk;
 
 int
 rand(void)
@@ -121,64 +123,80 @@ char * utoa(unsigned int value, char *s, int base)
 }
 
 void * malloc(int size){
-	type_block	currentBlock,lastBlock;
-	int 	alignedSize;
-	alignedSize=align(size);
+	type_block currentBlock, lastBlock;
+	int alignedSize = align(size);
 	
 	if(baseHeapAddress){
 		//Find a block starting from base address
-		lastBlock=baseHeapAddress;
-		currentBlock=findBlock(&lastBlock,alignedSize);
+		lastBlock = baseHeapAddress;
+		currentBlock = findBlock(&lastBlock, alignedSize);
 		if(currentBlock){
-		//Try to split the current block, using what is just necessary
-			if((currentBlock->size - alignedSize)>=(HEADERBLOCK_SIZE+4)){
-				splitBlock(currentBlock,alignedSize);
+			//Try to split the current block, using what is just necessary
+			if(currentBlock->size - alignedSize >= METADATA_SIZE + MINBLOCK_SIZE){
+				splitBlock(currentBlock, alignedSize);
 			}
-			currentBlock->free=0;
+			currentBlock->free = 0;
 		}else{
-		// Expand heap
-			currentBlock= expandHeap(lastBlock,alignedSize);
+			// Expand heap
+			currentBlock = expandHeap(lastBlock, alignedSize);
 			if(!currentBlock){
-			//Couldn't expand heap	
+				//Couldn't expand heap	
 				return NULL;
 			}
 		}
 	}else{
 		//First initialization
-		baseHeapAddress=sc_getHeapAddress();
+		baseHeapAddress = lastSbrk = (type_block)sc_getBaseHeapAddress();
 		currentBlock = expandHeap(baseHeapAddress, alignedSize);
 		if(!currentBlock){
 			//Couldn't expand heap
 			return NULL;
 		}
-		baseHeapAddress=currentBlock;
+		//baseHeapAddress = currentBlock;
 	}
-	return currentBlock->data;
+	return (void *)((char *)currentBlock + METADATA_SIZE);
 }
 
-type_block findBlock(type_block *lastBlock,int size){
-	type_block block=lastBlock;
-	while(block && !(block->free && block->size >=size)){
-		*last=block;
-		block=block->next;
+type_block findBlock(type_block *lastBlock, int size){
+	type_block curBlock = baseHeapAddress;
+	while(curBlock && !(curBlock->free && curBlock->size >= size)){
+		*lastBlock = curBlock;
+		curBlock = curBlock->next;
 	}
-	return (block);
+	return curBlock;
 }
 
-type_block splitBlock(type_block b,int size){
-	type_block splitedBlock;
-	splitBlock= b->data+ size;
-	splitBlock->next = b->next;
-	splitBlock-> prev = b;
-	splitBlock->free = 1;
-	splitBlock->dataPointer= splitBlock->data;
-	splitBlock->size = b->size-size-HEADERBLOCK_SIZE;
-	b->next= splitBlock;
-	b->size= size;
+type_block splitBlock(type_block b, int size){
+	type_block newBlock;
+	newBlock = (type_block)((char *)b + METADATA_SIZE + size);
+	newBlock->next = b->next;
+	newBlock->prev = b;
+	newBlock->free = 1;
+	newBlock->size = b->size - size - METADATA_SIZE;
+	b->next = newBlock;
+	b->size = size;
 	
-	if(splitBlock->next){
-		splitBlock->next->prev= splitBlock;
+	if(newBlock->next){
+		newBlock->next->prev= newBlock;
 	}
+
+	return newBlock;
+}
+
+type_block expandHeap(type_block lastBlock, int size){	
+	while((char *)lastBlock + size + METADATA_SIZE > (char *)lastSbrk){
+		lastSbrk = sc_sbrk();
+		if (lastSbrk == (void *)ENOMEM){
+			return NULL;
+		}
+	}
+
+	lastBlock->free = 0;
+	lastBlock->size = (int)((char *)lastSbrk - ((char *)lastBlock + METADATA_SIZE));
+	splitBlock(lastBlock, size);
+	
+	return lastBlock;	
+}	
 }
 
 type_block expandHeap(block lastBlock,int size){

@@ -16,6 +16,7 @@ extern ss_set_handler
 extern format_set_handler
 extern ss_status_handler
 extern sbrk_handler
+extern bhadd_handler
 
 _outb:
     push    rbp
@@ -89,6 +90,8 @@ sys_soft:                                 ; int 80h handler
     jz sys_is_ss_on
     cmp rdi, 8
     jz sys_sbrk
+    cmp rdi, 9
+    jz sys_bhadd
     push rax
     mov al, 0x20
     out 0x20, al
@@ -102,6 +105,19 @@ sys_sbrk:
     mov rdx, rcx
     mov rcx, r8
     call sbrk_handler
+    push rax
+    mov al, 0x20
+    out 0x20, al
+    pop rax
+    pop rdi
+    iretq
+
+sys_bhadd:
+    mov rdi, rsi
+    mov rsi, rdx
+    mov rdx, rcx
+    mov rcx, r8
+    call bhadd_handler
     push rax
     mov al, 0x20
     out 0x20, al

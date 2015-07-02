@@ -1,14 +1,20 @@
 #ifndef _STDLIB_H
 #define _STDLIB_H
-#define HEADERBLOCK_SIZE 32
+
+#define NULL (void *)0
+#define METADATA_SIZE sizeof(struct block)
+#define MINBLOCK_SIZE 4
+#define ENOMEM -1
+
+typedef struct block *type_block;
+
 struct block{
 	int size;
-	block * next;
-	block * prev;
+	type_block next;
+	type_block prev;
 	int free;
-	void* dataPointer;
-	char data[1];	
-}typedef struct block *type_block
+};
+
 int     rand(void);
 void    srand(unsigned int seed);
 
@@ -21,5 +27,10 @@ char	*utoa(unsigned int value, char *str, int base);
 
 int     abs(int x);
 long    labs(long x);
+
+void * malloc(int size);
+type_block findBlock(type_block *lastBlock, int size);
+type_block splitBlock(type_block b, int size);
+type_block expandHeap(type_block lastBlock, int size);
 
 #endif

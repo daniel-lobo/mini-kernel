@@ -6,6 +6,7 @@
 #define ENOMEM -1
 
 void * sbrk_handler();
+void * bhadd_handler();
 void init_heap(void * address);
 
 #endif

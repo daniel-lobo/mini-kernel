@@ -13,6 +13,10 @@ void * sbrk_handler(){
 	}
 }
 
+void * bhadd_handler(){
+	return start_address;
+}
+
 void init_heap(void * address){
 	start_address = address;
 	cur_address = start_address;
