@@ -54,6 +54,34 @@ atoi(const char *str)
     return result;
 }
 
+unsigned int atoh(const char *str)
+{
+    int result, index;
+    result = index = 0;
+
+    while (str[index] != 0)
+    {
+        if (isxdigit(str[index])){
+        	result = result + (str[index] - 55) * pow(16, index);
+        }else if(isdigit(str[index])){
+        	result = result + (str[index] - '0') * pow(16, index);
+        }else{
+           return 0;
+        }
+        index++;
+    }
+    return result;
+}
+
+int pow(int base, int exponent){
+	int result = 1;
+	while(exponent > 0){
+		result *= base;
+		exponent--;
+	}
+	return result;
+}
+
 char *
 itoa(int value, char *s, int base)
 {
@@ -182,7 +210,8 @@ type_block splitBlock(type_block b, int size){
 	return newBlock;
 }
 
-type_block expandHeap(type_block lastBlock, int size){	
+type_block expandHeap(type_block lastBlock, int size){
+	//Sbrk till it can fit the block or no mem space
 	while((char *)(lastBlock + 1) + size > (char *)lastSbrk){
 		lastSbrk = sc_sbrk();
 		if (lastSbrk == (void *)ENOMEM){
@@ -215,6 +244,9 @@ void free(void * address){
 			//If it was the last block, make it go boom
 			if (blockToFree->prev){
 				blockToFree->prev->next = NULL;
+			}else{
+				//Has no next nor previous
+				baseHeapAddress = NULL;
 			}
 		}
 	}
@@ -236,6 +268,7 @@ int validAddress(void * address){
 				return address == (getBlockFromAddress(address) + 1);
 			}
 		}
+		//In a trully protectec system we would throw a sc exception here
 		return 0;
 }
 

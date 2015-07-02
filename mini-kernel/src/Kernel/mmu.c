@@ -5,10 +5,10 @@ void * start_address;
 void * cur_address;
 
 void * sbrk_handler(){
-	cur_address += SBRK_SIZE;
-	if (cur_address > start_address + MAX_HEAP_SIZE){
+	if ((char *)cur_address + SBRK_SIZE > (char *)start_address + MAX_HEAP_SIZE){
 		return (void *)ENOMEM;
 	} else {
+		cur_address = (void *)((char *)cur_address + SBRK_SIZE);
 		return cur_address;
 	}
 }
@@ -18,6 +18,5 @@ void * bhadd_handler(){
 }
 
 void init_heap(void * address){
-	start_address = address;
-	cur_address = start_address;
+	start_address = cur_address = address;
 }

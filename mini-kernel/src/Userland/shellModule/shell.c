@@ -23,14 +23,16 @@ command_t commands[] = {
     { "prtc", exec_print_rtc },
     { "sstest", exec_test_ss },
     { "sstime", exec_set_ss },
-    { "hstring", exec_heap_test },
+    { "smalloc", exec_string_malloc },
+    { "malloc", exec_malloc },
+    { "pheap", exec_print_heap },
+    { "free", exec_free },
     { NULL, NULL }
 };
 
 int
 main(void)
 {
-
     memset(&bss, 0, &endOfBinary - &bss);
     sh_show_prompt();
 	return 0;
@@ -41,8 +43,8 @@ sh_show_prompt()
 {
     display_prompt();
     char buf[MAX_ARGS];
-    // type_block blockTest;
-    // printf("size of struct %d, mem:%u, size_add:%u, next_add:%u, prev_add:%u, free_add:%u, data:%u\n",sizeof(struct block), blockTest, blockTest->size, blockTest->next, blockTest->prev, blockTest->free, (type_block)((char *)blockTest + METADATA_SIZE));
+    //type_block blockTest;
+    //printf("size of struct %d, mem:%u, size_add:%u, next_add:%u, prev_add:%u, free_add:%u, data:%u\n",sizeof(struct block), blockTest, blockTest->size, blockTest->next, blockTest->prev, blockTest->free, blockTest + 1);
     while (1)
     {
         gets(buf, sizeof(buf));

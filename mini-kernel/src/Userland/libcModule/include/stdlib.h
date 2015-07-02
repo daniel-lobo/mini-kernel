@@ -21,6 +21,8 @@ void    srand(unsigned int seed);
 int     atof(const char *nptr);
 int     atoi(const char *nptr);
 long    atol(const char *nptr);
+unsigned int atoh(const char *str);
+int pow(int base, int exponent);
 
 char	*itoa(int value, char *str, int base);
 char	*utoa(unsigned int value, char *str, int base);

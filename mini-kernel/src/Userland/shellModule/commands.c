@@ -105,24 +105,57 @@ exec_set_ss(int argc, char **argv)
 	return 0;
 }
 
-int 
-exec_heap_test(int argc, char **argv){
+int exec_string_malloc(int argc, char **argv){
+    args_shift(1, &argc, &argv);
 
-    // args_shift(1, &argc, &argv);
-    // char ** addresses;
-    // int i;
+    while (argc)
+    {
+        char * s = (char *)malloc(strlen(*argv)+1);
+        if (s){
+            strcpy(s, *argv++);
+            printf("Malloc string:%s Address:%u\n",s,s); 
+        }else{
+            printf("Not enough heap for: %s", *argv++);
+        }
+        argc--;
+    }
+    return 0;
+}
 
-    // for (i = 0; i < argc; i++)
-    // {
-    //     addresses[i] = (char *)malloc(strlen(*argv));
-    //     if (!addresses[i]) {
-    //         strcpy(*argv++, addresses[i]);
-    //         printf("String: %s,  Address: %u\n", addresses[i], addresses[i]);
-    //         free((void *) addresses[i]);
-    //         printf("Freeing address: %u\n", addresses[i]);
-    //     }
+int exec_malloc(int argc, char **argv){
+    args_shift(1, &argc, &argv);
 
-    // }
+    void * s = malloc(atoi(*argv));
+    if (s){
+        printf("Malloc %d bytes at address %u\n", atoi(*argv), s);
+    }else{
+        printf("Not enough heap for %d bytes\n", atoi(*argv));
+    }
+    return 0;
+}
+
+int exec_print_heap(int argc, char **argv){
+    type_block curBlock = sc_getBaseHeapAddress();
+    while (curBlock->next){
+        printf("---------------------------------------------------------\n");
+        printf("Block add:%u Block size:%d Prev block:%u Next block:%u Free:%d\n", curBlock, curBlock->size, curBlock->prev, curBlock->next, curBlock->free);
+        printf("---------------------------------------------------------\n");
+        printf("String:%s Address:%u\n", curBlock + 1, curBlock + 1);
+        curBlock = curBlock->next;
+    }
+    return 0;
+}
+
+int exec_free(int argc, char **argv){
+    args_shift(1, &argc, &argv);
+
+    while (argc)
+    {
+        int dir = atoi(*argv++);
+        free((void *)dir);
+        printf("Freeing address:%u\n",dir);
+        argc--;
+    }
     return 0;
 }
 
