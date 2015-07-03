@@ -280,14 +280,14 @@ void free(void * address){
 	}
 }
 
-type_block mergeFreeBlocks(type_block prev, type_block blockToFree){
+type_block mergeFreeBlocks(type_block prevBlock, type_block blockToFree){
 	//Merges the block
-	prev->size += blockToFree->size;
-	prev->next = blockToFree->next;
-	if (prev->next){
-		prev->next->prev = blockToFree;
+	prevBlock->size += blockToFree->size;
+	prevBlock->next = blockToFree->next;
+	if (prevBlock->next){
+		prevBlock->next->prev = prevBlock;
 	}
-	return prev;
+	return prevBlock;
  }
  
 int validAddress(void * address){

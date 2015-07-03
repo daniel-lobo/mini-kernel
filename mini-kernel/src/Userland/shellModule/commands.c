@@ -141,7 +141,7 @@ int exec_print_heap(int argc, char **argv){
     type_block curBlock = getBaseBlock();
     
     if (!curBlock){
-        printf("Heap is empty bro");
+        printf("Heap is empty bro\n");
         return 1;
     }
     while (curBlock){
