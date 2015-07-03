@@ -32,10 +32,10 @@ char	*utoa(unsigned int value, char *str, int base);
 int     abs(int x);
 long    labs(long x);
 
-void * malloc(size_t size);
-type_block findBlock(type_block *lastBlock, size_t size);
-type_block splitBlock(type_block b, size_t size);
-type_block expandHeap(type_block lastBlock, size_t size);
+void * malloc(int size);
+type_block findBlock(type_block *lastBlock, int size);
+type_block splitBlock(type_block b, int size);
+type_block expandHeap(type_block lastBlock, int size);
 type_block getBaseBlock();
 
 void free(void * address);

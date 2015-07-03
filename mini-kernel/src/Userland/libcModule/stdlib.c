@@ -167,7 +167,7 @@ char * utoa(unsigned int value, char *s, int base)
     return sb;
 }
 
-void * malloc(size_t size){
+void * malloc(int size){
 	if(size < 0){
 		size = 0;
 	}
@@ -207,7 +207,7 @@ void * malloc(size_t size){
 	return (void *)(currentBlock + 1);
 }
 
-type_block findBlock(type_block *lastBlock, size_t size){
+type_block findBlock(type_block *lastBlock, int size){
 	type_block curBlock = baseHeapAddress;
 	while(curBlock && !(curBlock->free && curBlock->size >= size)){
 		*lastBlock = curBlock;
@@ -216,7 +216,7 @@ type_block findBlock(type_block *lastBlock, size_t size){
 	return curBlock;
 }
 
-type_block splitBlock(type_block b, size_t size){
+type_block splitBlock(type_block b, int size){
 	type_block newBlock;
 	newBlock = (type_block)((char *)(b + 1) + size);
 	newBlock->next = b->next;
@@ -231,7 +231,7 @@ type_block splitBlock(type_block b, size_t size){
 	return b;
 }
 
-type_block expandHeap(type_block lastBlock, size_t size){
+type_block expandHeap(type_block lastBlock, int size){
 	//My future base address for the block
 	char * neededBaseAdd;
 	if (lastBlock){
