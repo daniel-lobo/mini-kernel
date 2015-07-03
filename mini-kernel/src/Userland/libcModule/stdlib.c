@@ -191,7 +191,7 @@ void * malloc(size_t size){
 			currentBlock = expandHeap(lastBlock, size);
 			if(!currentBlock){
 				//Couldn't expand heap	
-				return NULL;c
+				return NULL;
 			}
 		}
 	}else{
@@ -232,7 +232,7 @@ type_block splitBlock(type_block b, size_t size){
 }
 
 type_block expandHeap(type_block lastBlock, size_t size){
-	//My future base address for the block 
+	//My future base address for the block
 	char * neededBaseAdd;
 	if (lastBlock){
 		neededBaseAdd = (char *)(lastBlock + 1) + lastBlock->size;
