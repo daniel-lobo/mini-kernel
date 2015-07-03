@@ -165,7 +165,7 @@ void * malloc(int size){
 			}
 			currentBlock->free = 0;
 		}else{
-			// Expand heap
+			// Expand heap because it didnt find any available block
 			currentBlock = expandHeap(lastBlock, alignedSize);
 			if(!currentBlock){
 				//Couldn't expand heap	
@@ -175,7 +175,7 @@ void * malloc(int size){
 	}else{
 		//First initialization
 		baseHeapAddress = lastSbrk = (type_block)sc_getBaseHeapAddress();
-		currentBlock = expandHeap(baseHeapAddress, alignedSize);
+		currentBlock = expandHeap(NULL, alignedSize);
 		if(!currentBlock){
 			//Couldn't expand heap
 			return NULL;
@@ -211,20 +211,44 @@ type_block splitBlock(type_block b, int size){
 }
 
 type_block expandHeap(type_block lastBlock, int size){
-	//Sbrk till it can fit the block or no mem space
-	while((char *)(lastBlock + 1) + size > (char *)lastSbrk){
-		lastSbrk = sc_sbrk();
-		if (lastSbrk == (void *)ENOMEM){
-			return NULL;
-		}
+	//My future base address for the block
+	char * neededBaseAdd;
+	if (lastBlock){
+		neededBaseAdd = (char *)(lastBlock + 1) + lastBlock->size;
+	}else{
+		neededBaseAdd = (char *)baseHeapAddress;
 	}
 
-	lastBlock->free = 0;
-	lastBlock->size = (int)((char *)lastSbrk - ((char *)lastBlock + METADATA_SIZE));
-	splitBlock(lastBlock, size);
+	//Sbrk till it can fit the block or no mem space
+	while(neededBaseAdd + METADATA_SIZE + size > (char *)lastSbrk){
+		void * tmp = sc_sbrk();
+		if(tmp == (void *)ENOMEM){
+			return NULL;
+		}else{
+			lastSbrk = tmp;
+		}
+	}
 	
-	return lastBlock;	
+	type_block newBlock;
+	newBlock = (type_block)neededBaseAdd;
+	newBlock->size = size;
+	newBlock->free = 0;
+	newBlock->prev = lastBlock;
+	if(lastBlock){
+		lastBlock->next = newBlock;
+	}else{
+		baseHeapAddress = newBlock;
+	}
+	return newBlock;
+	//printf("lastSbrk:%u lastBlock:%u lastBlock+1:%u", lastSbrk, lastBlock, lastBlock+1);
+	//lastBlock->free = 0;
+	//lastBlock->size = (int)((char *)lastSbrk - ((char *)lastBlock + METADATA_SIZE));
+	//splitBlock(lastBlock, size);	
 }	
+
+type_block getBaseBlock(){
+	return baseHeapAddress;
+}
 
 void free(void * address){
 	type_block blockToFree;
@@ -254,7 +278,7 @@ void free(void * address){
 
 type_block mergeFreeBlocks(type_block prev, type_block blockToFree){
 	//Merges the block
-	prev->size += METADATA_SIZE + blockToFree->size;
+	prev->size += blockToFree->size;
 	prev->next = blockToFree->next;
 	if (prev->next){
 		prev->next->prev = blockToFree;

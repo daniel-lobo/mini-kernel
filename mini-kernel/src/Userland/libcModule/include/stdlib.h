@@ -34,6 +34,7 @@ void * malloc(int size);
 type_block findBlock(type_block *lastBlock, int size);
 type_block splitBlock(type_block b, int size);
 type_block expandHeap(type_block lastBlock, int size);
+type_block getBaseBlock();
 
 void free(void * address);
 int validAddress(void * address);

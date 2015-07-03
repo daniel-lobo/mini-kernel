@@ -130,7 +130,7 @@ bool sendToBuffer(char key) {
 }
 
 bool updateStates(char key) {
-	if (key == LEFT_SHIFT_MAKE || key == RIGHT_SHIFT_MAKE) {
+	if (key == LEFT_SHIFT_MAKE) {
 		currentKeyboard.state.shifted = !currentKeyboard.state.shifted;
 		return true;
 	}
