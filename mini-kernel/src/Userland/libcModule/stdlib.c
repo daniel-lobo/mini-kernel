@@ -173,32 +173,31 @@ void * malloc(size_t size){
 	}
 
 	type_block currentBlock, lastBlock;
-	size_t alignedSize = align(size);
 	
 	if(baseHeapAddress){
 		//Find a block starting from base address
 		lastBlock = baseHeapAddress;
-		currentBlock = findBlock(&lastBlock, alignedSize);
+		currentBlock = findBlock(&lastBlock, size);
 		if(currentBlock){
 			//Try to split the current block, using what is just necessary
-			if(currentBlock->size - alignedSize >= METADATA_SIZE + MINBLOCK_SIZE){
-				splitBlock(currentBlock, alignedSize);
+			if(currentBlock->size - size >= METADATA_SIZE + MINBLOCK_SIZE){
+				splitBlock(currentBlock, size);
 			}else{
-				currentBlock->size = alignedSize;	
+				currentBlock->size = size;	
 			}
 			currentBlock->free = 0;
 		}else{
 			// Expand heap because it didnt find any available block
-			currentBlock = expandHeap(lastBlock, alignedSize);
+			currentBlock = expandHeap(lastBlock, size);
 			if(!currentBlock){
 				//Couldn't expand heap	
-				return NULL;
+				return NULL;c
 			}
 		}
 	}else{
 		//First initialization
 		baseHeapAddress = (type_block)sc_getBaseHeapAddress();
-		currentBlock = expandHeap(NULL, alignedSize);
+		currentBlock = expandHeap(NULL, size);
 		if(!currentBlock){
 			//Couldn't expand heap
 			baseHeapAddress = NULL;
@@ -233,7 +232,7 @@ type_block splitBlock(type_block b, size_t size){
 }
 
 type_block expandHeap(type_block lastBlock, size_t size){
-	//My future base address for the block
+	//My future base address for the block 
 	char * neededBaseAdd;
 	if (lastBlock){
 		neededBaseAdd = (char *)(lastBlock + 1) + lastBlock->size;
