@@ -33,7 +33,10 @@ exec_help(int argc, char **argv)
     printf("srtc         set time\n");
     printf("sstest       display screensaver\n");
     printf("sstime       set screensaver timer\n");
-
+    printf("malloc       reserves the number of bytes passed as arguments\n");
+    printf("free         free an allocated address (refered by bytes in decimal format)\n");
+    printf("smalloc      malloc strings passed as argument\n");
+    printf("pheap        prints the heap structures\n");
     return 0;
 }
 
@@ -142,7 +145,7 @@ int exec_print_heap(int argc, char **argv){
         return 1;
     }
     while (curBlock){
-        printf("Block address: %u\nData address: %u\nBlock size: %d\nPrev block: %u\nNext block: %u\nFree: %d\nString: %s\n\n", curBlock, curBlock + 1, curBlock->size, curBlock->prev, curBlock->next, curBlock->free, curBlock + 1);
+        printf("Block address: %u (byte number)\nData address: %u\nBlock size: %d\nPrev block: %u\nNext block: %u\nFree: %d\nString: %s\n\n", curBlock, curBlock + 1, curBlock->size, curBlock->prev, curBlock->next, curBlock->free, curBlock + 1);
         curBlock = curBlock->next;
     }
     return 0;
