@@ -151,6 +151,10 @@ char * utoa(unsigned int value, char *s, int base)
 }
 
 void * malloc(int size){
+	if(size < 1){
+		return null;
+	}
+
 	type_block currentBlock, lastBlock;
 	int alignedSize = align(size);
 	
@@ -265,11 +269,11 @@ void free(void * address){
 				blockToFree = mergeFreeBlocks(blockToFree, blockToFree->next);
 			}
 		}else{
-			//If it was the last block, make it go boom
+			//If it was the last block, make sure prev points to null
 			if (blockToFree->prev){
 				blockToFree->prev->next = NULL;
 			}else{
-				//Has no next nor previous
+				//Has no next nor previous so heap is empty
 				baseHeapAddress = NULL;
 			}
 		}
