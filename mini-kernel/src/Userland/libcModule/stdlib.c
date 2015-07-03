@@ -238,6 +238,7 @@ type_block expandHeap(type_block lastBlock, int size){
 	newBlock->size = size;
 	newBlock->free = 0;
 	newBlock->prev = lastBlock;
+	newBlock->next = 0;
 	if(lastBlock){
 		lastBlock->next = newBlock;
 	}else{
