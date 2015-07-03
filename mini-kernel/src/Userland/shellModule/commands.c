@@ -128,11 +128,11 @@ int exec_string_malloc(int argc, char **argv){
 int exec_malloc(int argc, char **argv){
     args_shift(1, &argc, &argv);
 
-    void * s = malloc(atoi(*argv));
+    void * s = malloc(uatoi(*argv));
     if (s){
-        printf("Malloc %d bytes at address %u\n", atoi(*argv), s);
+        printf("Malloc %d bytes at address %u\n", uatoi(*argv), s);
     }else{
-        printf("Not enough heap for %d bytes\n", atoi(*argv));
+        printf("Not enough heap for %d bytes\n", uatoi(*argv));
     }
     return 0;
 }

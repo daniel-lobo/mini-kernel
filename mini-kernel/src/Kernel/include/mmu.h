@@ -2,9 +2,9 @@
 #define _MMU_
 
 //Hasta 5 MB de heap
-#define MAX_HEAP_SIZE 0x2800000
+#define MAX_HEAP_SIZE 0x500000
 //Incrementos de 8KB
-#define SBRK_SIZE 0x10000
+#define SBRK_SIZE 0x2000
 #define ENOMEM -1
 
 void * sbrk_handler();

@@ -7,6 +7,7 @@
 #define ENOMEM -1
 
 typedef struct block *type_block;
+typedef unsigned int size_t;
 
 struct block{
 	int size;
@@ -21,6 +22,7 @@ void    srand(unsigned int seed);
 int     atof(const char *nptr);
 int     atoi(const char *nptr);
 long    atol(const char *nptr);
+unsigned int uatoi(const char *str);
 unsigned int atoh(const char *str);
 int pow(int base, int exponent);
 
@@ -30,10 +32,10 @@ char	*utoa(unsigned int value, char *str, int base);
 int     abs(int x);
 long    labs(long x);
 
-void * malloc(int size);
-type_block findBlock(type_block *lastBlock, int size);
-type_block splitBlock(type_block b, int size);
-type_block expandHeap(type_block lastBlock, int size);
+void * malloc(size_t size);
+type_block findBlock(type_block *lastBlock, size_t size);
+type_block splitBlock(type_block b, size_t size);
+type_block expandHeap(type_block lastBlock, size_t size);
 type_block getBaseBlock();
 
 void free(void * address);

@@ -39,7 +39,7 @@ void * getStackBase()
 {
 	return (void*)(
 		(uint64_t)&endOfKernel
-		+ PageSize * 1536				//The size of the stack itself, 6MB
+		+ PageSize * 8				//The size of the stack itself, 32kb
 		- sizeof(uint64_t)			//Begin at the top of the stack
 	);
 }
@@ -105,7 +105,7 @@ int main()
 	rtc_fix();
 
 	// Start heap from binary end
-	init_heap(&endOfKernel);
+	init_heap(0x1000000);
 
 	((EntryPoint)shell_module_address)();
 

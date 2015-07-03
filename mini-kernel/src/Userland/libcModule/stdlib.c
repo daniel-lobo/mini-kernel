@@ -9,8 +9,8 @@
 
 int errno;
 unsigned long rand_seed = 4;
-type_block baseHeapAddress;
-void * lastSbrk;
+type_block baseHeapAddress = NULL;
+void * lastSbrk = NULL;
 
 int
 rand(void)
@@ -41,6 +41,23 @@ int
 atoi(const char *str)
 {
     int result = 0;
+    while (*str != 0)
+    {
+        if (!isdigit(*str))
+        {
+           errno = 22;
+           return 0;
+        }
+        result = result * 10 + (*str - '0');
+        str++;
+    }
+    return result;
+}
+
+unsigned int
+uatoi(const char *str)
+{
+    unsigned int result = 0;
     while (*str != 0)
     {
         if (!isdigit(*str))
@@ -150,13 +167,13 @@ char * utoa(unsigned int value, char *s, int base)
     return sb;
 }
 
-void * malloc(int size){
+void * malloc(size_t size){
 	if(size < 0){
 		size = 0;
 	}
 
 	type_block currentBlock, lastBlock;
-	int alignedSize = align(size);
+	size_t alignedSize = align(size);
 	
 	if(baseHeapAddress){
 		//Find a block starting from base address
@@ -166,6 +183,8 @@ void * malloc(int size){
 			//Try to split the current block, using what is just necessary
 			if(currentBlock->size - alignedSize >= METADATA_SIZE + MINBLOCK_SIZE){
 				splitBlock(currentBlock, alignedSize);
+			}else{
+				currentBlock->size = alignedSize;	
 			}
 			currentBlock->free = 0;
 		}else{
@@ -178,17 +197,18 @@ void * malloc(int size){
 		}
 	}else{
 		//First initialization
-		baseHeapAddress = lastSbrk = (type_block)sc_getBaseHeapAddress();
+		baseHeapAddress = (type_block)sc_getBaseHeapAddress();
 		currentBlock = expandHeap(NULL, alignedSize);
 		if(!currentBlock){
 			//Couldn't expand heap
+			baseHeapAddress = NULL;
 			return NULL;
 		}
 	}
 	return (void *)(currentBlock + 1);
 }
 
-type_block findBlock(type_block *lastBlock, int size){
+type_block findBlock(type_block *lastBlock, size_t size){
 	type_block curBlock = baseHeapAddress;
 	while(curBlock && !(curBlock->free && curBlock->size >= size)){
 		*lastBlock = curBlock;
@@ -197,7 +217,7 @@ type_block findBlock(type_block *lastBlock, int size){
 	return curBlock;
 }
 
-type_block splitBlock(type_block b, int size){
+type_block splitBlock(type_block b, size_t size){
 	type_block newBlock;
 	newBlock = (type_block)((char *)(b + 1) + size);
 	newBlock->next = b->next;
@@ -206,15 +226,13 @@ type_block splitBlock(type_block b, int size){
 	newBlock->size = b->size - size - METADATA_SIZE;
 	b->next = newBlock;
 	b->size = size;
-	
 	if(newBlock->next){
 		newBlock->next->prev= newBlock;
 	}
-
-	return newBlock;
+	return b;
 }
 
-type_block expandHeap(type_block lastBlock, int size){
+type_block expandHeap(type_block lastBlock, size_t size){
 	//My future base address for the block
 	char * neededBaseAdd;
 	if (lastBlock){
@@ -222,9 +240,9 @@ type_block expandHeap(type_block lastBlock, int size){
 	}else{
 		neededBaseAdd = (char *)baseHeapAddress;
 	}
-
 	//Sbrk till it can fit the block or no mem space
 	while(neededBaseAdd + METADATA_SIZE + size > (char *)lastSbrk){
+
 		void * tmp = sc_sbrk();
 		if(tmp == (void *)ENOMEM){
 			return NULL;
