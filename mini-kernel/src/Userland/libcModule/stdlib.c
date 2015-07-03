@@ -151,8 +151,8 @@ char * utoa(unsigned int value, char *s, int base)
 }
 
 void * malloc(int size){
-	if(size < 1){
-		return null;
+	if(size < 0){
+		size = 0;
 	}
 
 	type_block currentBlock, lastBlock;
